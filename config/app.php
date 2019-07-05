@@ -149,7 +149,9 @@ return [
 
         /*
          * Package Service Providers...
-         */
+		 */
+		// @see https://laravelcollective.com/docs/master/html
+		Collective\Html\HtmlServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -208,7 +210,27 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+		/*
+		 * Package aliases...
+		 */
+        // @see https://laravelcollective.com/docs/master/html
+		'Form' => Collective\Html\FormFacade::class,
+      	'Html' => Collective\Html\HtmlFacade::class,
+
+        /*
+         * Application aliases...
+         */
+        'JqxLayout' => App\Support\Facades\JqxLayout::class,
 
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Error reporting
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'error_reporting' => (E_ALL &~ E_NOTICE),
 
 ];

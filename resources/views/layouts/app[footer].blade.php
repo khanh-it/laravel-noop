@@ -1,7 +1,5 @@
-<footer>
-    <nav class="navbar navbar-default navbar-fixed-bottom">
-        <div class="container">
-            <p class="">...</p>
-        </div>
+<footer class="clearfix">
+    <nav class="navbar appnav-bottom navbar-default navbar-fixed-bottom">
+        <p class="">© Copyright...</p>
     </nav>
 </footer>

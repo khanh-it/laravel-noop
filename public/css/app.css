@@ -2,7 +2,7 @@
 body {
     background-color: #f5f8fa;
     font-family: "Raleway", sans-serif;
-    padding: 55px 0 55px 180px;
+    padding: 50px 0px 50px 180px;
 }
 .appnav-default {
     background-color: white;
@@ -18,30 +18,17 @@ body {
     padding: 6rem 0.5rem 0.5rem 0.5rem;
     box-shadow: inset 1px 0 0 rgba(255,255,255,.15), 1px 0 5px rgba(0,0,0,.075);
 }
+.appnav-bottom {
+    min-height: auto;
+}
 .nav-submenu > ul {
     padding-left: 1rem;
 }
-
-#app {
-    padding: 1rem;
-}
-#main {
-}
-.app-toolbar {
-    margin: 1rem 0;
-}
-.app-toolbar-top {
-
-}
-.app-toolbar-bottom {
-
-}
-.app-grid {
-
-}
-.app-grid > table {
+.app-breadcrumb {
     margin-bottom: auto;
+    background-color: white;
 }
+#main {padding:0.5rem;}
 /* /{xs} */
 
 /* {sm} */

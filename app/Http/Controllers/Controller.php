@@ -10,4 +10,14 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    /**
+     * @var array
+     */
+    public static $jqxResponse = [
+        'status' => 0,
+        'success' => null,
+        'warning' => null,
+        'errors' => null
+    ];
 }

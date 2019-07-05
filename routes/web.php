@@ -11,16 +11,55 @@
 |
 */
 
+// auth
 Auth::routes();
 
 //
 Route::group([
     'middleware' => ['auth'],
-    // 'prefix' => '',
+    'prefix' => 'cms',
     // 'namespace' => '',
     // 'name' => '',
     // 'domain' => '',
 ], function() {
+    /** Dashboard */
     Route::get('/', 'HomeController@index')->name('home');
+    /** .end#Dashboard */
+
+    /** Tag */
+    $prefix = 'tag';
+    Route::group([
+        'prefix' => $prefix
+    ], function() use ($prefix) {
+        $prefix = "{$prefix}::";
+        $clt = 'TagController@';
+        // Define routes
+        Route::any($act = 'index', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get($act = 'create', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}create"]);
+        Route::post($act = 'store', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get(($act = 'edit') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::post(($act = 'update') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get(($act = 'delete') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::post(($act = 'destroy') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+    });
+    /** .end#Tag */
+
+    /** Ads */
+    $prefix = 'ads';
+    Route::group([
+        'prefix' => $prefix
+    ], function() use ($prefix) {
+        $prefix = "{$prefix}::";
+        $clt = 'AdsController@';
+        // Define routes
+        Route::any($act = 'index', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get($act = 'create', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}create"]);
+        Route::post($act = 'store', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get(($act = 'edit') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::post(($act = 'update') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get(($act = 'delete') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::post(($act = 'destroy') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+    });
+    /** .end#Ads */
 });
 

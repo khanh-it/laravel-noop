@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 
 abstract class AbstractModel extends Model {
-    
+
     public function __construct()
     {
         parent::__construct();
@@ -87,7 +87,7 @@ abstract class AbstractModel extends Model {
         $datafields = [];
         $columngroups = [];
         $columns = static::$jqxGridColumns;
-        $permissons = Permissions::checkPermissons();
+        // $permissons = Permissions::checkPermissons();
         if (!empty($columns))
         {
             $prefix = static::$columnPrefix;
@@ -111,13 +111,13 @@ abstract class AbstractModel extends Model {
                 }
                 $datafields[] = $datafield;
                 //.end
-                //permissons
-                if($permissons['permissonsEdit'] === false && $classname !== SalaryConfirmDetail::class){
+                /* //permissons
+                if ($permissons['permissonsEdit'] === false && $classname !== SalaryConfirmDetail::class) {
                     if(count($col) > 1){
                         $col['editable'] = false;
                     }
                 }
-                //end
+                //end */
                 // Column groups:
                 if ($col['columngroup'])
                 {
@@ -206,7 +206,7 @@ abstract class AbstractModel extends Model {
 
     /**
      * Make query builder from jqx request payload
-     * 
+     *
      * @param array $data Request payload
      * @param null $totalRowsQB Illuminate\Database\Eloquent\Builder
      * @param array $opts
@@ -299,7 +299,7 @@ abstract class AbstractModel extends Model {
                                 $where = "whereNotNull";
                                 break;
                         }
-                        // 
+                        //
                         if ('datefilter' == $filter['type']) { // exp: Wed Sep 25 1974 00:00:00 GMT+0700 (Indochina Time)
                             list($value) = explode(' GMT', $value);
                             $value = $filter['value'] = strtotime($value);
