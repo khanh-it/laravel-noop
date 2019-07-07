@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Project test page</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=100"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+	<header><h1>header</h1></header>
+	<main>
+		<h2>main</h2>
+		<div id="ads-banner-123456"></div>
+	</main>
+	<footer><h1>footer</h1></footer>
+<script>
+//
+//
+(function(g){
+	//
+	g._adsWidgetsAsyncInit = 'ads-banner-123456';
+	//
+	var s = document.createElement('script');
+	s.src = 'http://127.0.0.1:8080/js/widgets.js';
+	// s.defer = true;
+	var p = (document.getElementsByTagName('head') || [document.body])[0];
+	p.appendChild(s);
+})(window);
+</script>
+</body>
+</html>
