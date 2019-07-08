@@ -9,6 +9,57 @@ namespace App\Models;
  */
 class Ads extends AbstractModel
 {
+	/**
+	 * @var String Secret key, used to generate token/hash
+	 */
+	const HASH_SECKEY = 'bjFy9mjEEU';
+
+	/**
+	 * @var String Hash encode method
+	 */
+	const HASH_ENCODE_METHOD = 'AES-256-CBC';
+
+	/**
+	 * Helper: encode data id
+	 * @param string $id Data id
+	 * @return string
+	 */
+    public static function encryptPriKey($id)
+    {
+	    $hash = @openssl_encrypt(
+	        trim($id),
+	        self::HASH_ENCODE_METHOD,
+	        self::HASH_SECKEY
+        );
+	    return ($hash);
+	}
+
+	/**
+	 * Helper: decode data id
+	 * @param string $hash
+	 * @return string
+	 */
+    public static function decryptPriKey($hash)
+    {
+        $hash = (trim($hash));
+	    $id = @openssl_decrypt(
+	        $hash,
+	        self::HASH_ENCODE_METHOD,
+	        self::HASH_SECKEY
+        );
+	    return $id;
+    }
+
+	/**
+	 * Fetch data for resources
+	 * @param int|string|array
+	 * @return mixed
+	 */
+    public static function find4Resource($id)
+    {
+        return static::find($id);
+    }
+
     // use SoftDeletes;
 
     /**
@@ -54,6 +105,15 @@ class Ads extends AbstractModel
         'ads_created_at',
         'ads_updated_at',
     ];
+
+    /**
+     * Get ads' content
+     * @return string
+     */
+    public function getAdsContent()
+    {
+        return $this->ads_content;
+    }
 
     /**
      * Column datafield prefix

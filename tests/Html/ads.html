@@ -10,22 +10,21 @@
 	<header><h1>header</h1></header>
 	<main>
 		<h2>main</h2>
-		<div id="ads-banner-123456"></div>
+		<div id="ads-1"></div>
 	</main>
 	<footer><h1>footer</h1></footer>
 <script>
 //
 //
-(function(g){
+(function(g, d){
 	//
-	g._adsWidgetsAsyncInit = 'ads-banner-123456';
+	g._adsWidgetsAsyncInit = '#ads-1';
 	//
-	var s = document.createElement('script');
-	s.src = 'http://127.0.0.1:8080/js/widgets.js';
-	// s.defer = true;
-	var p = (document.getElementsByTagName('head') || [document.body])[0];
-	p.appendChild(s);
-})(window);
+	var s = d.createElement('script');
+	s.src = 'https://w3l.banners.ads/resources/js/widget-ads.js?SHyOaiF%2FhRQQxnL%2Be65rXA%3D%3D';
+    s.type = "text/javascript"; s.async = true; s.defer = true;
+	(d.getElementsByTagName('head') || [d.body])[0].appendChild(s);
+})(window, document);
 </script>
 </body>
 </html>

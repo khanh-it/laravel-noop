@@ -63,3 +63,36 @@ Route::group([
     /** .end#Ads */
 });
 
+//
+
+
+// Resources...
+Route::group([
+    // 'middleware' => ['auth'],
+    'prefix' => 'resources',
+    // 'namespace' => '',
+    // 'name' => '',
+    // 'domain' => '',
+], function() {
+    /** Html */
+    $prefix = 'html';
+    Route::group([
+        'prefix' => $prefix,
+    ], function() {
+        $prefix = "{$prefix}::";
+        $clt = 'ResourcesController@';
+        Route::get($act = 'ads_frame.html', ['as' => "Resources::Html::AdsFrame", 'uses' => "{$clt}htmlAdsFrameAction"]);
+    });
+    /** .end#Html */
+
+    /** Javascript */
+    $prefix = 'js';
+    Route::group([
+        'prefix' => $prefix,
+    ], function() {
+        $prefix = "{$prefix}::";
+        $clt = 'ResourcesController@';
+        Route::get($act = 'widget-ads.js', ['as' => "Resources::Js::WidgetAds", 'uses' => "{$clt}jsWidgetAdsAction"]);
+    });
+    /** .end#Javascript */
+});
