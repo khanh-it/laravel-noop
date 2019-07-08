@@ -60,6 +60,28 @@ class Ads extends AbstractModel
         return static::find($id);
     }
 
+    /**
+     * Helper: encode data
+     * @param mixed $data
+     * @return string
+     */
+    public static function adsSpecsEncode($data)
+    {
+        return \is_string($data) ? $data : @\json_encode($data);
+    }
+    /**
+     * Helper: decode data
+     * @param string $data
+     * @return mixed
+     */
+    public static function adsSpecsDecode($data)
+    {
+        if (\is_string($data)) {
+            return @\json_decode($data, true);
+        }
+        return $data;
+    }
+
     // use SoftDeletes;
 
     /**
@@ -98,6 +120,8 @@ class Ads extends AbstractModel
      */
     protected $fillable = [
         'ads_name',
+        'ads_spec_width',
+        'ads_spec_height',
         'ads_note',
         'ads_content',
         'ads_uses',
@@ -127,6 +151,7 @@ class Ads extends AbstractModel
      */
     protected static $jqxGridColumns = [
         [ 'datafield' => 'id' ],
+        [ 'datafield' => 'hash' ],
         [ 'datafield' => 'type' ],
         [
             'text' => 'Ads name',
@@ -135,10 +160,22 @@ class Ads extends AbstractModel
             'pinned' => true,
         ],
         [
-            'text' => 'Số lượt click',
+            'text' => 'Size#width(px)',
+            'datafield' => 'spec_width',
+            'width' => 128,
+            'cellsalign' => 'right',
+        ],
+        [
+            'text' => 'Size#height(px)',
+            'datafield' => 'spec_height',
+            'width' => 128,
+            'cellsalign' => 'right',
+        ],
+        [
+            'text' => 'Lượt click',
             'cellsalign' => 'right',
             'datafield' => 'uses',
-            'width' => 128,
+            'width' => 96,
             'filterable' => false,
         ],
         [
@@ -224,6 +261,7 @@ class Ads extends AbstractModel
         $rows = $qB->get()->map(function($row, $idx)
             use ($statusList, $taxableList) {
                 $prop;
+                $row->setColVal(($prop = 'hash'), rawurlencode(static::encryptPriKey($row->id())));
                 $txt = '_text';
                 $row->setColVal(($prop = 'status') . $txt, $statusList[$row->colVal($prop)]);
                 //
@@ -235,4 +273,32 @@ class Ads extends AbstractModel
         // Return
         return $rows;
 	}
+
+    /**
+     * @Overloading magic __get
+     * @param string $prop Object's property name
+     * @return mixed
+     */
+    public function __get($prop)
+    {
+        $return = parent::__get($prop);
+        if (('ads_specs' === $prop) && is_string($return)) {
+            $return = ($this->{$prop} = static::adsSpecsDecode($return));
+        }
+        return $return;
+    }
+
+    /**
+     * @Overloading magic __set
+     * @param string $prop Object's property name
+     * @param mixed $value Object's value
+     * @return mixed
+     */
+    public function __set($prop, $value)
+    {
+        if (('ads_specs' === $prop) && is_array($value)) {
+            $value = static::adsSpecsEncode($value);
+        }
+        return parent::__set($prop, $value);
+    }
 }

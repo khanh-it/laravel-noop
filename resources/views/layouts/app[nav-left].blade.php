@@ -1,3 +1,4 @@
+@auth
 @php
 // Current request url
 $curRouteName = Route::currentRouteName();
@@ -43,3 +44,4 @@ $curRouteName = Route::currentRouteName();
 unset($curRouteName, $route, $routeName, $isActive);
 @endphp
 {{-- /appnav-left --}}
+@endauth

@@ -24,7 +24,12 @@
     var $ifr = $('<iframe />').attr({
       "src": host + "resources/html/ads_frame.html?" + hash,
     })
-    .css({ "width": 300, "height": 200 })
+    .css({
+      "border": "none 0",
+      "overflow": "hidden",
+      "width": {{$data->ads_spec_width}},
+      "height": {{$data->ads_spec_height}}
+    })
     .appendTo($ads);
   }
   // Init + execute

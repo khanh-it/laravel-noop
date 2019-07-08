@@ -30,7 +30,38 @@
         </div>
     </div>
     <div class="form-group gen-feedback">
-        {!! Form::label('ads_uses', ($label = "Số lượt click") . "", ['class' => $controlLabel], false) !!}
+        {!! Form::label('ads_specs', ($label = "Ads size") . " {$required}", ['class' => $controlLabel], false) !!}
+        <div class="col-xs-9">
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">W</span>
+                        {!! Form::number('ads_spec_width', 0, [
+                            'id' => 'ads_spec_width',
+                            'class' => 'form-control text-right',
+                            'maxlength' => '10',
+                            'required' => 'required'
+                        ]) !!}
+                        <span class="input-group-addon">px</span>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">H</span>
+                        {!! Form::number('ads_spec_height', 0, [
+                            'id' => 'ads_spec_height',
+                            'class' => 'form-control text-right',
+                            'maxlength' => '10',
+                            'required' => 'required'
+                        ]) !!}
+                        <span class="input-group-addon">px</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group gen-feedback">
+        {!! Form::label('ads_uses', ($label = "Lượt click") . "", ['class' => $controlLabel], false) !!}
         <div class="col-xs-9">
             {!! Form::number('ads_uses', 0, [
                 'id' => 'ads_uses',

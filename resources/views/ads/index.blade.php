@@ -13,12 +13,21 @@
         'body' => $windowBody,
         'footer' => $windowFooterBtns
     ]) !!}
+    {{-- window embedded code --}}
+    @php ob_start() @endphp
+        @include('ads.form2nd')
+    @php $windowBody = trim(ob_get_clean()) @endphp
+    {!! $jqxWindowCode->html([
+        'body' => $windowBody,
+        'footer' => ''
+    ]) !!}
 {{-- .end#ads --}}
 @endpush
 @push('script')
     <script>
         {!! $jqxGrid !!}
         {!! $jqxWindow !!}
+        {!! $jqxWindowCode !!}
     </script>
     <script src="{{ asset('js/app/ads/index.js') }}"></script>
 @endpush

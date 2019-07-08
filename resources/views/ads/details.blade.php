@@ -1,8 +1,6 @@
-@push('breadcrumb')
-<li>
-    <h5><b>{{$model->ads_code ? ("[{$model->ads_code}]") : ''}} {{$model->ads_name}}</b></h5>
-</li>
-@endpush
+@section('breadcrumb')
+<b>Ads: </b>{{$model->ads_name}} (width: {{numberFormat($model->ads_spec_width)}}px/ height: {{numberFormat($model->ads_spec_height)}}px)
+@endsection
 @push('MainPanel')
     {{-- form --}}
     {!! Form::open([

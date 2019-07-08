@@ -9,7 +9,9 @@
         var phpData = mJWids.$layout.data('php') || {};
         //
         var $jqxWindow = $('#jqxWindow');
+        var $jqxWindowCode = $('#jqxWindowCode');
         var $targetForm = $('#form1st');
+        var $form2nd = $('#form2nd');
 
         // prepare jqxWindow for CRUD actions
         mJWids.prepareWindowCRUD($jqxWindow);
@@ -52,6 +54,23 @@
                 }
                 evt.break = true;
             }
+            // Case: script
+            if ('script' === evt.action) {
+                //
+                if (evt.row) {
+                    var html = $form2nd.data('html');
+                    if (!html) {
+                        $form2nd.data('html', html = $.trim($form2nd.html()));
+                    }
+                    $form2nd.html(html
+                        .replace(/__adsid__/g, new Date().getTime())
+                        .replace(/__adshash__/g, evt.row.ads_hash)
+                    );
+                    // Show form
+                    $jqxWindowCode.jqxWindow('open');
+                }
+            }
+            //.end
             return evt.break;
         }
         /**
@@ -66,14 +85,14 @@
          */
         mJWids.$toolbar.on('initToolbarItems', function(evt, tbItems) {
             // mJWids.removeToolbarItems(['show']);
-            /* // toolbar: print
+            // toolbar: print
             tbItems.push({
-                "toolbar": "print",
-                "class" : "btn btn-sm btn-primary",
-                "icon" : "glyphicon glyphicon-print",
-                "text" : "In",
-                "title" : "In ads"
-            }); */
+                "toolbar": "script",
+                "class" : "btn btn-sm btn-warning",
+                "icon" : "glyphicon glyphicon-cog",
+                "text" : "&lt;script /&gt;",
+                "title" : "Embedded script"
+            });
         });
         //.end
         /**

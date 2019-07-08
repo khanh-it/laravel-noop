@@ -23,7 +23,7 @@ Route::group([
     // 'domain' => '',
 ], function() {
     /** Dashboard */
-    Route::get('/', 'HomeController@index')->name('home');
+    Route::get('', 'HomeController@index')->name('home');
     /** .end#Dashboard */
 
     /** Tag */
@@ -57,6 +57,7 @@ Route::group([
         Route::post($act = 'store', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
         Route::get(($act = 'edit') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
         Route::post(($act = 'update') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::match(['get', 'post'], ($act = 'show') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
         Route::get(($act = 'delete') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
         Route::post(($act = 'destroy') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
     });

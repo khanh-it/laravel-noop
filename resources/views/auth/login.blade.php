@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('content')
+@push('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-push-3 col-md-6">
+        <div class="col-md-push-2 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">{{ __('Login') }}</div>
 
@@ -66,4 +66,4 @@
         </div>
     </div>
 </div>
-@endsection
+@endpush

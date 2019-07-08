@@ -36,7 +36,10 @@ class AdsController extends Controller
 		$prefix = Models\Ads::$columnPrefix;
 		$adss = [
 			$prefix . 'code' => '',
-			$prefix . 'name' => 'required',
+            $prefix . 'name' => 'required',
+            $prefix . 'spec_width' => 'required',
+            $prefix . 'spec_height' => 'required',
+            $prefix . 'uses' => 'required',
 			$prefix . 'note' => '',
 		];
 		$datafields = array_keys($adss);
@@ -81,6 +84,8 @@ class AdsController extends Controller
 		$adss = [
 			($ID = ($prefix . 'id')) => 'required',
             $prefix . 'name' => 'required',
+            $prefix . 'spec_width' => 'required',
+            $prefix . 'spec_height' => 'required',
             $prefix . 'uses' => 'required',
 			$prefix . 'note' => '',
 			$prefix . 'status' => 'required',
@@ -258,7 +263,8 @@ class AdsController extends Controller
 				'index' => route('ads::index'),
 				'create' => route('ads::create'),
 				'store' => route('ads::store'),
-				'edit' => route('ads::edit', '_id_'),
+                'edit' => route('ads::edit', '_id_'),
+                'show' => route('ads::show', '_id_'),
 				'update' => route('ads::update', '_id_'),
 				'delete' => route('ads::destroy', '_id_'),
 			]
@@ -276,7 +282,18 @@ class AdsController extends Controller
 			'props' => [
 				'title' => 'Ads',
 				'width' => 680,
-				'height' => 340,
+				'height' => 420,
+				'autoOpen' => false,
+				'isModal' => true,
+			]
+        ]]);
+        // +++ +++ window: show embedded code!
+		$jqxWindowCode = app()->make(Jqx\Window::class, ['options' => [
+            'selector' => '#jqxWindowCode',
+			'props' => [
+				'title' => 'Embedded script',
+				'width' => 680,
+				'height' => 560,
 				'autoOpen' => false,
 				'isModal' => true,
 			]
@@ -285,10 +302,11 @@ class AdsController extends Controller
 		$jqxForm = app()->make(Jqx\Form::class);
 
 		// Render view
-		return view('ads.index', [
-			'jqxGrid' => $jqxGrid,
-			// 'jqxForm' => $jqxForm,
-			'jqxWindow' => $jqxWindow,
-		]);
+		return view('ads.index', compact([
+			'jqxGrid',
+			// 'jqxForm',
+            'jqxWindow',
+            'jqxWindowCode',
+		]));
 	}
 }

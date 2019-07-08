@@ -1,5 +1,5 @@
 /**
- * system/utility/template.details
+ * ads/details
  */
 (function($) {
     // On document ready
@@ -12,17 +12,17 @@
         // +++
         var phrases = phpData.phrases || {};
         // +++ elements
-        var $templateContentBox = $('#template_content-box');
-        var $templateContent = $('#template_content');
+        var $adsContentBox = $('#ads_content-box');
+        var $adsContent = $('#ads_content');
 
         // CKEDITOR
         var editor = (function(){
-            var eToolbarHeight = 165 /* ckeditor's toolbar height */;
+            var eToolbarHeight = 125 /* ckeditor's toolbar height */;
             var opts = {
                 // width: '100%',
-                height: Math.round($templateContentBox.height() - eToolbarHeight) + 'px',
+                height: Math.round($adsContent.height() - eToolbarHeight) + 'px',
             }
-            return (window.__editor = CKEDITOR.replace($templateContent.get(0), opts));
+            return (window.__editor = CKEDITOR.replace($adsContent.get(0), opts));
         })();
         //.end
 
@@ -62,7 +62,7 @@
                 // Show loading
                 mJWids.$loader.jqxLoader('open');
                 //
-                $.post(phpData.routes.update, { "type": "update_template_content", "data": editor.getData() }, function(result) {
+                $.post(phpData.routes.update, { "type": "update_ads_content", "data": editor.getData() }, function(result) {
                     var msgErr = 'Lưu không thành công, vui lòng thử lại..!';
                     try {
                         result = (typeof result == 'string') ? $.parseJSON(result) : result;
@@ -114,14 +114,14 @@
                 "text" : "Lưu",
                 "title" : "Lưu bảng lương"
             });
-            // toolbar: print
+            /* // toolbar: print
             tbItems.push({
                 "toolbar": "print",
                 "class" : "btn btn-sm btn-primary",
                 "icon" : "glyphicon glyphicon-print",
                 "text" : "In",
                 "title" : "In tag"
-            });
+            }); */
         });
         //.end
         /**
