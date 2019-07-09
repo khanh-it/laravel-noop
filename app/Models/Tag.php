@@ -61,11 +61,42 @@ class Tag extends AbstractModel
      * Return type list
      * @return void
      */
-    public static function typeList() {
+    public static function typeList()
+    {
         $list = [
             static::TYPE_0 => 'Zero',
         ];
         return $list;
+    }
+
+    /**
+     * Collection to string
+     * @param Collection $clt
+     * @return string
+     */
+    public static function cltToStr($clt)
+    {
+        $return = [];
+        foreach ($clt as $ent) {
+            $return[] = $ent->colVal('name') . ' [' . $ent->id() . ']';
+        }
+        $return = \implode(', ', $return);
+
+        return $return;
+    }
+
+    /**
+     * Set 'name'
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        // format
+        $name = \preg_replace("/[^A-Za-z0-9_ ]/", '', $name);
+        $name = \str_replace([ ' ' ], [ '_' ], $name);
+        $this->setColVal('name', $name);
+        return $this;
     }
 
     /**
@@ -195,4 +226,63 @@ class Tag extends AbstractModel
         // Return
         return $rows;
 	}
+
+    /**
+     * Find one by name
+     * @param string $name
+     * @param array $opts An array of options
+     * @return null|Tag
+     */
+    public static function findOneByName($name, array $opts = [])
+    {
+        $result = static::whereRaw(1)
+            ->where(static::columnName('name'), $name)
+            ->first()
+        ;
+        return $result;
+    }
+
+    /**
+     * Find one or create by name
+     * @param string $name
+     * @param array $opts An array of options
+     * @return null|Tag
+     */
+    public static function findOneOrCreateByName($name, array $opts = [])
+    {
+        $result = static::findOneByName($name);
+        if (!$result) {
+            $result = app()->make(static::class);
+            $result->setName($name);
+            $result->setColVal('note', '[auto]');
+            $result->save();
+        }
+        return $result;
+    }
+
+    /**
+     * Find data for reportDashboard
+     * @param array $opts An array of options
+     * @return array
+     */
+    public static function rptDashboard(array $opts = [])
+    {
+        // Total
+        $totalEnt = static::selectRaw('COUNT(*) AS total')
+            ->where(static::columnName('status'), static::STATUS_1)
+            ->first()
+        ;
+        // Latest
+        $latestEnts = static::whereRaw(1)
+            ->where(static::columnName('status'), static::STATUS_1)
+            ->orderBy(static::columnName('id'), 'DESC')
+            ->limit($opts['limit'] ?? 10)
+            ->get()
+        ;
+        $result = [
+            'total' => $totalEnt->total,
+            'items' => $latestEnts
+        ];
+        return $result;
+    }
 }

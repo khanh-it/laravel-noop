@@ -131,6 +131,22 @@ class Ads extends AbstractModel
     ];
 
     /**
+     * Collection to string
+     * @param Collection $clt
+     * @return string
+     */
+    public static function cltToStr($clt)
+    {
+        $return = [];
+        foreach ($clt as $ent) {
+            $return[] = $ent->colVal('name') . ' [' . $ent->id() . ']';
+        }
+        $return = \implode(', ', $return);
+
+        return $return;
+    }
+
+    /**
      * Get ads' content
      * @return string
      */
@@ -156,27 +172,37 @@ class Ads extends AbstractModel
         [
             'text' => 'Ads name',
             'datafield' => 'name',
-            'width' => 256,
+            'width' => 200,
             'pinned' => true,
         ],
         [
-            'text' => 'Size#width(px)',
+            'text' => 'Width(px)',
             'datafield' => 'spec_width',
-            'width' => 128,
+            'width' => 80,
             'cellsalign' => 'right',
+            'filterable' => false,
+            'sortable' => false,
         ],
         [
-            'text' => 'Size#height(px)',
+            'text' => 'Height(px)',
             'datafield' => 'spec_height',
-            'width' => 128,
+            'width' => 80,
             'cellsalign' => 'right',
+            'filterable' => false,
+            'sortable' => false,
         ],
         [
             'text' => 'Lượt click',
             'cellsalign' => 'right',
             'datafield' => 'uses',
-            'width' => 96,
+            'width' => 80,
             'filterable' => false,
+        ],
+        [
+            'text' => 'Tags',
+            'datafield' => [ ['tags'] ],
+            // 'width' => 120,
+            'sortable' => false,
         ],
         [
             'text' => 'Ghi chú',
@@ -189,7 +215,7 @@ class Ads extends AbstractModel
             'datafield' => ['status', [
                 'type' => 'int'
             ]],
-            'width' => 94,
+            'width' => 90,
             'cellsalign' => 'right',
             'sortable' => false,
             'columntype' => 'checkbox',
@@ -240,27 +266,69 @@ class Ads extends AbstractModel
         // +++
         $statusList = static::statusList();
         $statusListFlip = array_flip($statusList);
+        // +++
+        $models = [
+            'tag' => app()->make(Tag::class),
+            'rel' => app()->make(Rel4AdsNTag::class)
+        ];
+        $tables = [
+            '_' => $modelTable = $this->getTable(),
+            'tag' => $models['tag']->getTable(),
+            'rel' => $models['rel']->getTable()
+        ];
 
 		// Prepare the data
         $qB = $this->qBFromJqxRequestPayload($data, $totalRowsQB, [
             // Alter query builder
-            'queryBuilder' => function(\Illuminate\Database\Eloquent\Builder $qB, &$data) {},
+            'queryBuilder' => function(\Illuminate\Database\Eloquent\Builder $qB, &$data)
+                use (&$models, &$tables)
+                {
+                    /* // Join "rel"
+                    $qB->leftJoin(
+                        ($tables['rel']),
+                        function ($join) use ($models, $tables) {
+                            $join->on(
+                                ("{$tables['rel']}." . $models['rel']->columnName('ref01'))
+                                , '=', "{$tables['_']}." . $this->getKeyName()
+                            )->where(
+                                ("{$tables['rel']}." . $models['rel']->columnName('type')),
+                                Rel4AdsNTag::TYPE_ADS_N_TAG
+                            );
+                        }
+                    );
+                    // Join "tag"
+                    $qB->leftJoin(
+                        ($tables['tag'])
+                        , ("{$tables['tag']}." . ($pK = $models['tag']->getKeyName()))
+                        , '=', "{$tables['rel']}." . $models['rel']->columnName('ref02')
+                    ); */
+                    // dd($qB->toSql());
+                }
+            ,
             // Alter where conditions
             'where' => function(&$join, &$where, &$filter, &$condition, &$value)
-                use ($taxableListFlip, $statusListFlip)
+                use ($taxableListFlip, $statusListFlip, &$models, &$tables)
                 {
                     if (($prop = 'ads_status'). '_text' === $filter['field']) {
                         $filter['field'] = $prop;
                         $value = $filter['value'] = $statusListFlip[$value];
                     }
+                    // tags
+                    if (($prop = 'tags') === $filter['field']) {
+                        // $filter['field'] = 'tag_name';
+                        return false;
+                    }
                 }
         ]);
         // var_dump($data);die($qB->toSql());
-		// Format data
+        // Format data
 		// +++
         $rows = $qB->get()->map(function($row, $idx)
             use ($statusList, $taxableList) {
                 $prop;
+                // +++ tags
+                $tags = Tag::cltToStr(Tag::find(Rel4AdsNTag::findByRef1st($row->id())));
+                $row->{($prop = 'tags')} = $tags;
                 $row->setColVal(($prop = 'hash'), rawurlencode(static::encryptPriKey($row->id())));
                 $txt = '_text';
                 $row->setColVal(($prop = 'status') . $txt, $statusList[$row->colVal($prop)]);
@@ -300,5 +368,74 @@ class Ads extends AbstractModel
             $value = static::adsSpecsEncode($value);
         }
         return parent::__set($prop, $value);
+    }
+
+    /**
+     * Helper: slit tags by string
+     */
+    public static function splitTags($tags, array $opts = [])
+    {
+        $tags = \trim($tags);
+        $tags = \array_filter(\explode($opts['delimiter'] ?? ',', $tags));
+        $data = [];
+        foreach ($tags as $tag) {
+            $tag = \trim($tag);
+            if (\preg_match('/^([^\[\]]*)(\[(\d+)\]$)?/i', $tag, $m)) {
+                $data[\trim($m[1])] = $m[3];
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Set ads's tags
+     * @param string $tags
+     * @return int
+     */
+    public function setTags($_tags)
+    {
+        // Remove previous tags
+        Rel4AdsNTag::destroyByRef1st($this->id());
+        // Add new tags,...
+        $effected = 0;
+        $tags = static::splitTags($_tags);
+        if (!empty($tags)) {
+            foreach ($tags as $tagName => $tagId) {
+                $tagEnt = Tag::findOneOrCreateByName($tagName);
+                if ($tagEnt) {
+                    $refEnt = app()->make(Rel4AdsNTag::class);
+                    $refEnt->setColVal('ref01', $this->id());
+                    $refEnt->setColVal('ref02', $tagEnt->id());
+                    $effected += !!$refEnt->save();
+                }
+            }
+        }
+        return $effected;
+    }
+
+    /**
+     * Find data for reportDashboard
+     * @param array $opts An array of options
+     * @return array
+     */
+    public static function rptDashboard(array $opts = [])
+    {
+        // Total
+        $totalEnt = static::selectRaw('COUNT(*) AS total')
+            ->where(static::columnName('status'), static::STATUS_1)
+            ->first()
+        ;
+        // Latest
+        $latestEnts = static::whereRaw(1)
+            ->where(static::columnName('status'), static::STATUS_1)
+            ->orderBy(static::columnName('id'), 'DESC')
+            ->limit($opts['limit'] ?? 10)
+            ->get()
+        ;
+        $result = [
+            'total' => $totalEnt->total,
+            'items' => $latestEnts
+        ];
+        return $result;
     }
 }

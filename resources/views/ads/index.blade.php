@@ -29,6 +29,7 @@
         {!! $jqxWindow !!}
         {!! $jqxWindowCode !!}
     </script>
+    <script src="{{ asset('js/app/tag/_utils.js') }}"></script>
     <script src="{{ asset('js/app/ads/index.js') }}"></script>
 @endpush
 {{-- layout --}}

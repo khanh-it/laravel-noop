@@ -40,6 +40,7 @@ class AdsController extends Controller
             $prefix . 'spec_width' => 'required',
             $prefix . 'spec_height' => 'required',
             $prefix . 'uses' => 'required',
+            'tags' => '',
 			$prefix . 'note' => '',
 		];
 		$datafields = array_keys($adss);
@@ -49,11 +50,17 @@ class AdsController extends Controller
 			$response['errors'] = $validator->errors();
 		} else {
 			try {
-				// Insert data
+                // Insert data
 				$data = $validator->getData();
                 $model = app()->make(Models\Ads::class);
                 $model->fill($data);
-				$result = $model->statusActive()->save();
+                $result = $model->statusActive()->save();
+                // +++ tags
+                if ($result) {
+                    $model = Models\Ads::find($model->id());
+                    $effected = $model->setTags($data['tags'] ?? '');
+                }
+                //
 				$response['status'] = !!$result;
 			} catch (\Exception $e) {
 				$response['errors'][] = [$e->getMessage()];
@@ -87,6 +94,7 @@ class AdsController extends Controller
             $prefix . 'spec_width' => 'required',
             $prefix . 'spec_height' => 'required',
             $prefix . 'uses' => 'required',
+            'tags' => '',
 			$prefix . 'note' => '',
 			$prefix . 'status' => 'required',
 		];
@@ -103,6 +111,10 @@ class AdsController extends Controller
 				if ($model) {
 					$model->fill($data);
 					$result = $model->save();
+                    // +++ tags
+                    if ($result) {
+                        $effected = $model->setTags($data['tags'] ?? '');
+                    }
 				}
 				$response['status'] = !!$result;
 			} catch (\Exception $e) {

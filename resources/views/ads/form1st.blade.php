@@ -72,6 +72,17 @@
         </div>
     </div>
     <div class="form-group gen-feedback">
+        {!! Form::label('tags', ($label = "Tags") . "", ['class' => $controlLabel], false) !!}
+        <div class="col-xs-9">
+            {!! Form::textarea('tags', null, [
+                'id' => 'tags',
+                'class' => 'form-control',
+                'placeholder' => $label,
+                'rows' => 3,
+            ]) !!}
+        </div>
+    </div>
+    <div class="form-group gen-feedback">
         {!! Form::label('ads_note', ($label = "Ghi chú") . "", ['class' => $controlLabel], false) !!}
         <div class="col-xs-9">
             {!! Form::textarea('ads_note', null, [

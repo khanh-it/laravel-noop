@@ -7,6 +7,7 @@
     <style>
         body {margin:0;padding:0;}
         body > p {margin:0;padding:0;}
+        img {max-width: 100% !important;}
     </style>
 </head>
 <body>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models;
 use App\Helpers\CommonFunc;
 
 class HomeController extends Controller
@@ -24,6 +25,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        //
+        $rptTagData = Models\Tag::rptDashboard();
+        $rptAdsData = Models\Ads::rptDashboard();
+
+        //
+        return view('home', compact([
+            'rptTagData',
+            'rptAdsData',
+        ]));
     }
 }

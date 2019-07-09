@@ -218,12 +218,8 @@ class TagController extends Controller
 	public function read($data, $jqxLayout)
 	{
 		// Prepare the data
-		$readtype = Request::get('_readtype');
 		$model;
 		switch ($readtype) {
-			case 'tagtype':
-				$model = app()->make(Models\TagType::class);
-				break;
 			default:
 				$model = app()->make(Models\Tag::class);
 		}

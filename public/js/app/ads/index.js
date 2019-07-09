@@ -115,5 +115,35 @@
             }
         });
         //.end
+
+        // Implement tags
+        var $tags = $('#tags');
+        $tags.on('open', function (event) {
+            var $popup = $(event.args.popup);
+            $popup.css('z-index', 1810);
+        });
+        $tags.jqxTextArea({
+            placeHolder: $.myUtils.js._("Enter tags name..."),
+            width: '100%', height: '3rem',
+            source: function (query, response) {
+                var item = query.split(/,\s*/).pop();
+                // update the search query.
+                $tags.jqxTextArea({ query: item });
+                // remote search
+                mJWids.myJqxSearchTagName(item, response);
+            },
+            renderer: function (itemValue, inputValue) {
+                var terms = inputValue.split(/,\s*/);
+                // remove the current input
+                terms.pop();
+                // add the selected item
+                terms.push(itemValue);
+                // add placeholder to get the comma-and-space at the end
+                terms.push("");
+                var value = terms.join(", ");
+                return value;
+            }
+        });
+        //.end
     });
 })(jQuery);

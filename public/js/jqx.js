@@ -684,6 +684,52 @@
         },
         //.end
         /**
+         * Helper: jqx search
+         * @param {String} route Route to request (exp: /search/index)
+         * @param {Object} opts A data object
+         * @param {Function} cb A callback function
+         * @return void
+         */
+        myJqxSearch: function myJqxSearch(route, opts, cb) {
+            // Get, format input
+            cb = cb || $.noop;
+            opts = $.extend(opts, {});
+            // +++
+            var filterGroups = {};
+            if (opts.filter) {
+                opts.filter = $.extend(opts.filter, {});
+                filterGroups[opts.filter.field] = {
+                    "field": opts.filter.field,
+                    "filters": [{
+                        "label": opts.filter.label || opts.filter.value,
+                        "value": opts.filter.value,
+                        "condition": opts.filter.condition || "CONTAINS",
+                        "operator": opts.filter.operator || "and",
+                        "field": opts.filter.field,
+                        "type": opts.filter.type || "stringfilter"
+                    }]
+                };
+            }
+            // +++
+            var data = {
+                "_jqxact": "read",
+                "pagenum": opts.pagenum || 0,
+                "pagesize": opts.pagesize || 30,
+                "recordstartindex": opts.startindex || 0,
+                "recordendindex": opts.endindex || 30,
+                "filterGroups": filterGroups,
+                "groupGroups":[],
+                "_": (new Date()).getTime()
+            };
+
+            // Make request
+            $.get(route, data, function(result) {
+                // Fire callback?!
+                cb(result);
+            });
+        },
+        //.end
+        /**
          *
          */
         __init: function __init() {
