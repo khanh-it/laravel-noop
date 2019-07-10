@@ -58,7 +58,7 @@ class AdsController extends Controller
                 // +++ tags
                 if ($result) {
                     $model = Models\Ads::find($model->id());
-                    $effected = $model->setTags($data['tags'] ?? '');
+                    $effected = $model->useTags($data['tags'] ?? '');
                 }
                 //
 				$response['status'] = !!$result;
@@ -113,7 +113,7 @@ class AdsController extends Controller
 					$result = $model->save();
                     // +++ tags
                     if ($result) {
-                        $effected = $model->setTags($data['tags'] ?? '');
+                        $effected = $model->useTags($data['tags'] ?? '');
                     }
 				}
 				$response['status'] = !!$result;

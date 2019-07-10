@@ -21,9 +21,11 @@ class HttpsProtocol
         // Redirect http --> https?!
         // $appEnv = config('app.env');
         // if ($appEnv === 'production' || $appEnv === 'staging' || $appEnv === 'develop') {
-            if (($_SERVER["HTTP_X_FORWARDED_PROTO"] ?? null) != 'https') {
-                return redirect()->secure($request->getRequestUri(), 301);
-            }
+			if (!$request->isSecure()/* case: direct server */
+				&& (($_SERVER["HTTP_X_FORWARDED_PROTO"] ?? null) != 'https')
+			) {
+				return redirect()->secure($request->getRequestUri(), 301);
+			}
         // }
 
         return $next($request);

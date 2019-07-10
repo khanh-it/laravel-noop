@@ -16,7 +16,7 @@
       return console.warn('#ads is missing!');
     }
     var $ifr = $('<iframe/>')
-    .attr("src", host + "resources/html/ads_frame.html?" + hash)
+    .attr("src", host + "resources/html/ads_frame.html?" + hash + '&_fr=' + location)
     .css({
       "border": "none 0", "outline": "none 0",
       "overflow": "hidden",

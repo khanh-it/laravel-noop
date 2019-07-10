@@ -152,7 +152,7 @@ class Ads extends AbstractModel
      */
     public function getAdsContent()
     {
-        return $this->ads_content;
+        return $this->colVal('content');
     }
 
     /**
@@ -343,34 +343,6 @@ class Ads extends AbstractModel
 	}
 
     /**
-     * @Overloading magic __get
-     * @param string $prop Object's property name
-     * @return mixed
-     */
-    public function __get($prop)
-    {
-        $return = parent::__get($prop);
-        if (('ads_specs' === $prop) && is_string($return)) {
-            $return = ($this->{$prop} = static::adsSpecsDecode($return));
-        }
-        return $return;
-    }
-
-    /**
-     * @Overloading magic __set
-     * @param string $prop Object's property name
-     * @param mixed $value Object's value
-     * @return mixed
-     */
-    public function __set($prop, $value)
-    {
-        if (('ads_specs' === $prop) && is_array($value)) {
-            $value = static::adsSpecsEncode($value);
-        }
-        return parent::__set($prop, $value);
-    }
-
-    /**
      * Helper: slit tags by string
      */
     public static function splitTags($tags, array $opts = [])
@@ -392,7 +364,7 @@ class Ads extends AbstractModel
      * @param string $tags
      * @return int
      */
-    public function setTags($_tags)
+    public function useTags($_tags)
     {
         // Remove previous tags
         Rel4AdsNTag::destroyByRef1st($this->id());

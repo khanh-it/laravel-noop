@@ -26,7 +26,7 @@ $host = \Request::getFacadeRoot()->getHost();
 	g._adsWidgetsAsyncInit = '#_ads-__adsid__';
 	var s = d.createElement('script');
 	s.src = 'https://{{$host}}/resources/js/widget-ads.js?__adshash__';
-    s.type = "text/javascript"; s.async = true; s.defer = true;
+	s.type = "text/javascript"; s.async = true; s.defer = true;
 	(d.getElementsByTagName('head') || [d.body])[0].appendChild(s);
 })(window, document);
 </script>

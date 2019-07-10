@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models;
 use App\Http\Controllers\Controller;
+// use App\Services\MobileDetect;
 
 /**
  * @class ResourcesController
@@ -41,7 +42,7 @@ class ResourcesController extends Controller
         $this->_hash = \current($request->keys());
         $id = Models\Ads::decryptPriKey($this->_hash);
         $this->_adsEnt = Models\Ads::find4Resource($id);
-        if (!$this->_adsEnt) {
+        if (!$this->_adsEnt || ($this->_adsEnt && !$this->_adsEnt->isStatusActive())) {
             \header("HTTP/1.0 404 Not Found");
             exit(0);
         }
@@ -72,14 +73,53 @@ class ResourcesController extends Controller
     /**
      * @TODO:...
      */
-    protected function _adsStat($_rdr, array $opts = [])
+    protected function _adsStat(Request $request, $stat, array $opts = [])
     {
         // Stat
-        $this->_adsEnt->ads_uses += 1;
-        $this->_adsEnt->save();
+        $flag = 0;
+        // +++ details
+        $rptEnt = app()->make(Models\Rpt::class);
+        $rptEnt->fill([
+            'rpt_ads_id' => $this->_adsEnt->id(),
+            'rpt_session' => $request->session()->getId(),
+            'rpt_uri_fr' => $opts['rpt_uri_fr'] ?? '',
+            'rpt_uri_to' => $opts['rpt_uri_to'] ?? '',
+            'rpt_ua' => $request->userAgent(),
+            'rpt_ips' => \implode(', ', $request->ips()),
+            'rpt_extra' => \json_encode($_SERVER)
+        ]);
+        //.end
+        // $mobileDetect = app()->make(MobileDetect::class);
+        if ('uses' == $stat) {
+            // details
+            $rptEnt->fill([
+                'rpt_type' => Models\Rpt::TYPE_USES
+            ]);
+            $this->_adsEnt->ads_uses += ($flag = 1);
+        }
+        if ('viewed' == $stat) {
+            // details
+            $rptEnt->fill([
+                'rpt_type' => Models\Rpt::TYPE_VIEWED
+            ]);
+            //.end
+            $this->_adsEnt->ads_viewed += ($flag = 1);
+        }
+        if ('clicked' == $stat) {
+            // details
+            $rptEnt->fill([
+                'rpt_type' => Models\Rpt::TYPE_CLICKED
+            ]);
+            //.end
+            $this->_adsEnt->ads_clicked += ($flag = 1);
+        }
+        if ($flag) {
+            $rptEnt->save();
+            $this->_adsEnt->save();
+        }
 
-        // Redirect
-        return redirect($_rdr);
+        // Return
+        return $this;
     }
 
 /** Html */
@@ -91,11 +131,19 @@ class ResourcesController extends Controller
         // Case: click ads?!
         $_rdr = trim($request->input('_rdr'));
         if ($_rdr) {
-            return $this->_adsStat($_rdr);
+            // [stat]
+            $this->_adsStat($request, 'clicked', [
+                'rpt_uri_to' => $_rdr
+            ]);
+            //.end
+            return redirect($_rdr);
         }
         //.end
+
         // Get, format ads's content
         $adsContent = $this->_adsEnt->getAdsContent();
+        // +++
+        $rptUriFr = trim($request->input('_fr'));
         // +++
         $replaceData = [
             "query" => \http_build_query([ $this->_hash => '', '_rdr' => '__rdr__' ]),
@@ -126,6 +174,12 @@ class ResourcesController extends Controller
         }, $adsContent);
         //.end
 
+        // [stat]
+        $this->_adsStat($request, 'viewed', [
+            'rpt_uri_fr' => $rptUriFr
+        ]);
+        //.end
+
         // Render view
         return view('resources.html.ads_frame', [
             'host' => $request->getHost(),
@@ -142,6 +196,10 @@ class ResourcesController extends Controller
      */
     public function jsWidgetAdsAction(Request $request)
     {
+        // [stat]
+        $this->_adsStat($request, 'uses');
+        //.end
+
         return static::_resJs('resources.js.ads-widget', [
             'host' => $request->getHost(),
             'hash' => $this->_hash,

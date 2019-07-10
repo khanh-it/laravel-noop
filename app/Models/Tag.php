@@ -86,16 +86,27 @@ class Tag extends AbstractModel
     }
 
     /**
+     * Format 'name'
+     * @param string $name
+     * @return string
+     */
+    public static function formatTagName($name)
+    {
+        // format
+        $name = \preg_replace("/[^A-Za-z0-9_ .]/", '', $name);
+        $name = \str_replace([ ' ', '.' ], [ '_', '_' ], $name);
+        return $name;
+    }
+
+    /**
      * Set 'name'
      * @param string $name
      * @return $this
      */
-    public function setName($name)
+    public function setTagName($name)
     {
-        // format
-        $name = \preg_replace("/[^A-Za-z0-9_ ]/", '', $name);
-        $name = \str_replace([ ' ' ], [ '_' ], $name);
-        $this->setColVal('name', $name);
+        // Format
+        $this->setColVal('name', $name = static::formatTagName($name));
         return $this;
     }
 
@@ -235,11 +246,11 @@ class Tag extends AbstractModel
      */
     public static function findOneByName($name, array $opts = [])
     {
-        $result = static::whereRaw(1)
-            ->where(static::columnName('name'), $name)
+        $ent = static::whereRaw(1)
+            ->where(static::columnName('name'), $name = static::formatTagName($name))
             ->first()
         ;
-        return $result;
+        return $ent;
     }
 
     /**
@@ -250,14 +261,14 @@ class Tag extends AbstractModel
      */
     public static function findOneOrCreateByName($name, array $opts = [])
     {
-        $result = static::findOneByName($name);
-        if (!$result) {
-            $result = app()->make(static::class);
-            $result->setName($name);
-            $result->setColVal('note', '[auto]');
-            $result->save();
+        $ent = static::findOneByName($name);
+        if (!$ent) {
+            $ent = app()->make(static::class);
+            $ent->setTagName($name);
+            $ent->setColVal('note', '[auto]');
+            $ent->save();
         }
-        return $result;
+        return $ent;
     }
 
     /**

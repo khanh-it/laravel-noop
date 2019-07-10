@@ -96,7 +96,7 @@ class TagController extends Controller
 				$data = $validator->getData();
 				$model = Models\Tag::find($data[$ID]);
 				if ($model) {
-					$model->fill($data);
+                    $model->fill($data);
 					$result = $model->save();
 				}
 				$response['status'] = !!$result;

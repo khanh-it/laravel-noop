@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 abstract class AbstractModel extends Model {
 
@@ -46,12 +47,11 @@ abstract class AbstractModel extends Model {
 
     /**
      * set status 1
-     *
-     * @return void
+     * @return $this
      */
     public function statusActive()
     {
-        $property = get_class($this) . '::STATUS_COLUMN';
+        $property = \get_class($this) . '::STATUS_COLUMN';
         if (defined($property)) {
             $property = constant($property);
             $this->{$property} = static::STATUS_1;
@@ -61,17 +61,29 @@ abstract class AbstractModel extends Model {
 
     /**
      * set status 0
-     *
-     * @return void
+     * @return $this
      */
     public function statusUnactive()
     {
-        $property = get_class($this) . '::STATUS_COLUMN';
+        $property = \get_class($this) . '::STATUS_COLUMN';
         if (defined($property)) {
             $property = constant($property);
             $this->{$property} = static::STATUS_0;
         }
         return $this;
+    }
+
+    /**
+     * check status 1?
+     * @return null|bool
+     */
+    public function isStatusActive()
+    {
+        $property = \get_class($this) . '::STATUS_COLUMN';
+        if (defined($property)) {
+            $property = constant($property);
+            return static::STATUS_1 == $this->{$property};
+        }
     }
 
     /**
@@ -390,7 +402,7 @@ abstract class AbstractModel extends Model {
      */
     public function colVal($colName)
     {
-        return $this->{static::columnName($colName)};
+        return $this->attributes[static::columnName($colName)];
     }
 
     /**
@@ -402,7 +414,7 @@ abstract class AbstractModel extends Model {
      */
     public function setColVal($colName, $value)
     {
-        $this->{static::columnName($colName)} = $value;
+        $this->attributes[static::columnName($colName)] = $value;
         return $this;
     }
 
@@ -426,5 +438,55 @@ abstract class AbstractModel extends Model {
     {
         $options['status'] = static::STATUS_0;
         return static::makeList($options);
+    }
+
+    /**
+     * @Overloading magic __get
+     * @param string $prop Object's property name
+     * @return mixed
+     */
+    public function __get($prop)
+    {
+        $meth = 'get' . \ucfirst(Str::camel($prop));
+        if (\method_exists($this, $meth)) {
+            return $this->{$meth}();
+        }
+        return parent::__get($prop);
+    }
+
+    /**
+     * @Overloading magic __set
+     * @param string $prop Object's property name
+     * @param mixed $value Object's value
+     * @return mixed
+     */
+    public function __set($prop, $value)
+    {
+        $meth = 'set' . \ucfirst(Str::camel($prop));
+        if (\method_exists($this, $meth)) {
+            return $this->{$meth}($value);
+        }
+        return parent::__set($prop, $value);
+    }
+
+    /**
+     * @Overloading parent::fill
+     * @param array $data
+     * @return mixed
+     */
+    public function fill(array $data)
+    {
+        if (!empty($data) && !empty($this->fillable)) {
+            foreach ($data as $key => $value) {
+                if (\in_array($key, $this->fillable)) {
+                    $meth = 'set' . \ucfirst(Str::camel($key));
+                    if (\method_exists($this, $meth)) {
+                        $this->{$meth}($value);
+                        $data[$key] = $this->{$key};
+                    }
+                }
+            }
+        }
+        return parent::fill($data);;
     }
 }
