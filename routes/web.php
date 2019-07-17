@@ -65,9 +65,6 @@ Route::group([
     /** .end#Ads */
 });
 
-//
-
-
 // Resources...
 Route::group([
     // 'middleware' => ['auth'],

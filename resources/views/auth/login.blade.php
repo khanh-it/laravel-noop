@@ -1,5 +1,3 @@
-@extends('layouts.app')
-
 @push('content')
 <div class="container">
     <div class="row">
@@ -54,10 +52,9 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Login') }}
                                 </button>
-
-                                <a class="btn btn-link" href="{{ route('password.request') }}">
+                                {{-- <a class="btn btn-link" href="{{ route('password.request') }}">
                                     {{ __('Forgot Your Password?') }}
-                                </a>
+                                </a> --}}
                             </div>
                         </div>
                     </form>
@@ -67,3 +64,4 @@
     </div>
 </div>
 @endpush
+@extends('layouts.app')
