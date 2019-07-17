@@ -125,6 +125,8 @@ class Ads extends AbstractModel
         'ads_note',
         'ads_content',
         'ads_uses',
+        'ads_viewed',
+        'ads_clicked',
         'ads_status',
         'ads_created_at',
         'ads_updated_at',
@@ -175,47 +177,69 @@ class Ads extends AbstractModel
             'width' => 200,
             'pinned' => true,
         ],
+        [ 'datafield' => 'spec_width' ],
+        [ 'datafield' => 'spec_height' ],
         [
-            'text' => 'Width(px)',
-            'datafield' => 'spec_width',
-            'width' => 80,
+            'text' => 'Size (W x H)',
+            'datafield' => [ ['specs'] ],
+            'width' => 100,
             'cellsalign' => 'right',
             'filterable' => false,
             'sortable' => false,
+            'pinned' => true,
         ],
         [
-            'text' => 'Height(px)',
-            'datafield' => 'spec_height',
-            'width' => 80,
-            'cellsalign' => 'right',
-            'filterable' => false,
-            'sortable' => false,
-        ],
-        [
-            'text' => 'Lượt click',
+            'text' => 'Tải',
             'cellsalign' => 'right',
             'datafield' => 'uses',
-            'width' => 80,
+            'width' => 50,
             'filterable' => false,
+            'columngroup' => ['rpt', [
+                'text' => 'Thống kê (lượt)',
+            ]]
+        ],
+        [
+            'text' => 'Xem',
+            'cellsalign' => 'right',
+            'datafield' => 'viewed',
+            'width' => 50,
+            'filterable' => false,
+            'columngroup' => 'rpt'
+        ],
+        [
+            'text' => 'Click',
+            'cellsalign' => 'right',
+            'datafield' => 'clicked',
+            'width' => 50,
+            'filterable' => false,
+            'columngroup' => 'rpt'
         ],
         [
             'text' => 'Tags',
             'datafield' => [ ['tags'] ],
-            // 'width' => 120,
+            // 'minwidth' => 180,
+            'filterable' => false,
+            'sortable' => false,
+        ],
+        [
+            'text' => 'Links',
+            'datafield' => [ ['links'] ],
+            // 'minwidth' => 180,
+            'filterable' => false,
             'sortable' => false,
         ],
         [
             'text' => 'Ghi chú',
+            'datafield' => 'note',
             'filterable' => false,
             'sortable' => false,
-            'datafield' => 'note',
         ],
         [
             'text' => 'Sử dụng?',
             'datafield' => ['status', [
                 'type' => 'int'
             ]],
-            'width' => 90,
+            'width' => 80,
             'cellsalign' => 'right',
             'sortable' => false,
             'columntype' => 'checkbox',
@@ -326,10 +350,21 @@ class Ads extends AbstractModel
         $rows = $qB->get()->map(function($row, $idx)
             use ($statusList, $taxableList) {
                 $prop;
+                // +++ size
+                $row->{($prop = 'specs')} = numberFormat($row->colVal('spec_width'))
+                    . ' x ' . numberFormat($row->colVal('spec_height')) // . 'px'
+                ;
+                // +++ report
+                // $row->setColVal(($prop = 'uses'), numberFormat($row->colVal($prop)));
+                // $row->setColVal(($prop = 'viewed'), numberFormat($row->colVal($prop)));
+                // $row->setColVal(($prop = 'clicked'), numberFormat($row->colVal($prop)));
                 // +++ tags
                 $tags = Tag::cltToStr(Tag::find(Rel4AdsNTag::findByRef1st($row->id())));
                 $row->{($prop = 'tags')} = $tags;
-                $row->setColVal(($prop = 'hash'), rawurlencode(static::encryptPriKey($row->id())));
+                // +++ links
+                $row->{($prop = 'links')} = ($links = $row->parseLinks());
+                // +++
+                $row->setColVal(($prop = 'hash'), \rawurlencode(static::encryptPriKey($row->id())));
                 $txt = '_text';
                 $row->setColVal(($prop = 'status') . $txt, $statusList[$row->colVal($prop)]);
                 //
@@ -409,5 +444,25 @@ class Ads extends AbstractModel
             'items' => $latestEnts
         ];
         return $result;
+    }
+
+    /**
+     * Parse <a /> links from content
+     * @return array
+     */
+    public function parseLinks(array $opts = [])
+    {
+        // Define vars
+        $links = [];
+
+        // Parse
+        $html = $this->getAdsContent();
+        $p = '/<a[^>]*href *=[\'"]([^\'"]+)[\'"] *[^>]*>/is';
+        if (\preg_match_all($p, $html, $m) && !empty($m = ($m[1] ?? []))) {
+            $links = \array_merge($links, $m);
+        }
+
+        // Return
+        return !!($opts['raw'] ?? false) ? $links : \implode('; ', $links);
     }
 }

@@ -55,20 +55,40 @@
                 evt.break = true;
             }
             // Case: script
-            if ('script' === evt.action) {
-                //
-                if (evt.row) {
-                    var html = $form2nd.data('html');
-                    if (!html) {
-                        $form2nd.data('html', html = $.trim($form2nd.html()));
-                    }
-                    $form2nd.html(html
-                        .replace(/__adsid__/g, new Date().getTime())
-                        .replace(/__adshash__/g, evt.row.ads_hash)
-                    );
-                    // Show form
-                    $jqxWindowCode.jqxWindow('open');
+            if ('script' === evt.action && evt.row) {
+                var html = $form2nd.data('html');
+                if (!html) {
+                    $form2nd.data('html', html = $.trim($form2nd.html()));
                 }
+                $form2nd.html(html
+                    .replace(/__adsid__/g, new Date().getTime())
+                    .replace(/__adshash__/g, evt.row.ads_hash)
+                );
+                // Show form
+                $jqxWindowCode.jqxWindow('open');
+            }
+            // rpt
+            if ('rpt' === evt.action && evt.row) {
+                var cWin = $(window).data('_cWinRpt_Ads');
+                var url = (phpData.routes.report.replace('_id_', evt.row.rowid));
+                if (!cWin || (('closed' in cWin) && cWin.closed)) {
+                    cWin = window.open(
+                        url,
+                        $.myUtils.js._('Thống kê'),
+                        [
+                            'width=1024',
+                            'height=768',
+                            'menubar=0',
+                            'status=0',
+                            'titlebar=0'
+                        ].join(','),
+                        true
+                    );
+                    $(window).data('_cWinRpt_Ads', cWin);
+                } else {
+                    cWin.location = url;
+                }
+                cWin.focus();
             }
             //.end
             return evt.break;
@@ -85,13 +105,21 @@
          */
         mJWids.$toolbar.on('initToolbarItems', function(evt, tbItems) {
             // mJWids.removeToolbarItems(['show']);
-            // toolbar: print
+            // toolbar: script
             tbItems.push({
                 "toolbar": "script",
                 "class" : "btn btn-sm btn-warning",
                 "icon" : "glyphicon glyphicon-cog",
                 "text" : "&lt;script /&gt;",
                 "title" : "Embedded script"
+            });
+            // toolbar: rpt
+            tbItems.push({
+                "toolbar": "rpt",
+                "class" : "btn btn-sm btn-primary",
+                "icon" : "glyphicon glyphicon-stats",
+                "text" : "Report",
+                "title" : "Thống kê"
             });
         });
         //.end

@@ -61,14 +61,43 @@
         </div>
     </div>
     <div class="form-group gen-feedback">
-        {!! Form::label('ads_uses', ($label = "Lượt click") . "", ['class' => $controlLabel], false) !!}
+        {!! Form::label('rpt', ($label = "Thống kê") . "", ['class' => $controlLabel], false) !!}
         <div class="col-xs-9">
-            {!! Form::number('ads_uses', 0, [
-                'id' => 'ads_uses',
-                'class' => 'form-control text-right',
-                'placeholder' => $label,
-                'maxlength' => '10',
-            ]) !!}
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">L.Tải</span>
+                        {!! Form::number('ads_uses', 0, [
+                            'id' => 'ads_uses',
+                            'class' => 'form-control text-right',
+                            'placeholder' => $label,
+                            'maxlength' => '10',
+                        ]) !!}
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">L.Xem</span>
+                        {!! Form::number('ads_viewed', 0, [
+                            'id' => 'ads_viewed',
+                            'class' => 'form-control text-right',
+                            'placeholder' => $label,
+                            'maxlength' => '10',
+                        ]) !!}
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="input-group">
+                        <span class="input-group-addon">L.Click</span>
+                        {!! Form::number('ads_clicked', 0, [
+                            'id' => 'ads_clicked',
+                            'class' => 'form-control text-right',
+                            'placeholder' => $label,
+                            'maxlength' => '10',
+                        ]) !!}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="form-group gen-feedback">
@@ -83,13 +112,25 @@
         </div>
     </div>
     <div class="form-group gen-feedback">
+        {!! Form::label('links', ($label = "Links") . "", ['class' => $controlLabel], false) !!}
+        <div class="col-xs-9">
+            {!! Form::textarea('links', null, [
+                'class' => 'form-control',
+                'placeholder' => $label,
+                'rows' => 3,
+                'readonly' => 'readonly',
+                'disabled' => 'disabled',
+            ]) !!}
+        </div>
+    </div>
+    <div class="form-group gen-feedback">
         {!! Form::label('ads_note', ($label = "Ghi chú") . "", ['class' => $controlLabel], false) !!}
         <div class="col-xs-9">
             {!! Form::textarea('ads_note', null, [
                 'id' => 'ads_note',
                 'class' => 'form-control',
                 'placeholder' => $label,
-                'rows' => 3,
+                'rows' => 2,
             ]) !!}
         </div>
     </div>

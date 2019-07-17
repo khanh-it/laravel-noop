@@ -66,7 +66,7 @@ class ResourcesController extends Controller
         ));
 
         return response($js, $code)
-            ->header('Content-Type', 'application/json')
+            ->header('Content-Type', 'application/javascript')
         ;
     }
 
@@ -161,14 +161,18 @@ class ResourcesController extends Controller
                 return $attr;
             }, $html);
             // +++ target
-            $attrFound = false;
+            // $attrFound = false;
             $html = \preg_replace_callback($p = '/target *= *[\'"]([^"]*)[\'"]/is', function($m) use (&$replaceData, &$attrFound) {
-                $attrFound = true;
-                return 'target="' . $replaceData['attr_target'] . '"';
+				$attr = $m[0]; $target = trim($m[1]) ?? null;
+				if (\in_array($target, ['', '_self'])) {
+					// $attrFound = true;
+					$attr = ('target="' . $replaceData['attr_target'] . '"');
+				}
+                return $attr;
             }, $html);
-            if (!$attrFound) {
+            /* if (!$attrFound) {
                 $html = \str_replace('<a', '<a target="' . $replaceData['attr_target'] . '"', $html);
-            }
+            } */
             // Return;
             return $html;
         }, $adsContent);

@@ -40,7 +40,10 @@ class AdsController extends Controller
             $prefix . 'spec_width' => 'required',
             $prefix . 'spec_height' => 'required',
             $prefix . 'uses' => 'required',
+            $prefix . 'viewed' => 'required',
+            $prefix . 'clicked' => 'required',
             'tags' => '',
+            'links' => '',
 			$prefix . 'note' => '',
 		];
 		$datafields = array_keys($adss);
@@ -94,7 +97,10 @@ class AdsController extends Controller
             $prefix . 'spec_width' => 'required',
             $prefix . 'spec_height' => 'required',
             $prefix . 'uses' => 'required',
+            $prefix . 'viewed' => 'required',
+            $prefix . 'clicked' => 'required',
             'tags' => '',
+            'links' => '',
 			$prefix . 'note' => '',
 			$prefix . 'status' => 'required',
 		];
@@ -238,8 +244,9 @@ class AdsController extends Controller
 		$readtype = Request::get('_readtype');
 		$model;
 		switch ($readtype) {
-			case 'adstype':
-				$model = app()->make(Models\AdsType::class);
+			case 'report':
+				$model = app()->make(Models\AdsReport::class);
+				$model->forAds(Request::get('ads'));
 				break;
 			default:
 				$model = app()->make(Models\Ads::class);
@@ -250,6 +257,63 @@ class AdsController extends Controller
 		//.end
 		// Response
 		return $jqxLayout->responseJqxGrid($rows, $totalRows);
+	}
+
+	/**
+	 * Report
+	 */
+	public function report($id, Request $request)
+	{
+		// Fetch data
+		$model = Models\Ads::find($id);
+		if (!$model) {
+			abort(404);
+        }
+
+        // Handle CRUD requests!
+        Request::merge([
+            '_readtype' => 'report',
+            'ads' => $model
+        ]);
+		$response = \JqxLayout::onRequestRead([$this, 'read']);
+		if ($response) {
+			return $response;
+		}
+		//.end
+
+		// Handle first page load request!
+		// Init widgets
+		// +++ layout
+		\JqxLayout::setJsData([
+			'routes' => $routes = []
+		]);
+		// +++ ads
+		// +++ +++ grid
+		$adsDfds; $adsCgs;
+		$adsColumns = Models\AdsReport::jqxGridColumns($adsDfds, $adsCgs);
+		$jqxGrid = app()->make(Jqx\Grid::class);
+		// @TODO: tat tinh nang filter, do bug groups --> hien thi sai khi co filter!
+		// $jqxGrid->setProps([]);
+		$jqxGrid->addColumns($adsColumns, $adsDfds, $adsCgs);
+		// +++ +++ window:
+		$jqxWindow = app()->make(Jqx\Window::class, ['options' => [
+			'props' => [
+				'title' => 'Ads Report',
+				'width' => 680,
+				'height' => 540,
+				'autoOpen' => false,
+				'isModal' => true,
+			]
+        ]]);
+		// +++ +++ form: CRUD ads
+		$jqxForm = app()->make(Jqx\Form::class);
+
+		// Render view
+		return view('ads.report', compact([
+            'model',
+			'jqxGrid',
+            'jqxWindow',
+		]));
 	}
 
 	/**
@@ -279,6 +343,7 @@ class AdsController extends Controller
                 'show' => route('ads::show', '_id_'),
 				'update' => route('ads::update', '_id_'),
 				'delete' => route('ads::destroy', '_id_'),
+				'report' => route('ads::report', '_id_'),
 			]
 		]);
 		// +++ ads
@@ -294,7 +359,7 @@ class AdsController extends Controller
 			'props' => [
 				'title' => 'Ads',
 				'width' => 680,
-				'height' => 420,
+				'height' => 520,
 				'autoOpen' => false,
 				'isModal' => true,
 			]

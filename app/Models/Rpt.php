@@ -72,4 +72,16 @@ class Rpt extends AbstractModel
         'rpt_created_at',
         'rpt_updated_at',
     ];
+
+    /**
+     * @return array
+     */
+    public static function typeList()
+    {
+        return [
+            static::TYPE_USES => 'Tải',
+            static::TYPE_VIEWED => 'Xem',
+            static::TYPE_CLICKED => 'Click'
+        ];
+    }
 }

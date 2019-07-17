@@ -11,7 +11,7 @@
     </style>
 </head>
 <body>
-    <base target="_parent" />
+	{{-- <base target="_parent" /> --}}
 	{!! $adsContent !!}
 </body>
 </html>

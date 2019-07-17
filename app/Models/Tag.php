@@ -126,7 +126,7 @@ class Tag extends AbstractModel
         [
             'text' => 'Tag name',
             'datafield' => 'name',
-            'width' => 256,
+            // 'width' => 256,
             'pinned' => true,
         ],
         [
@@ -135,6 +135,7 @@ class Tag extends AbstractModel
             'datafield' => 'uses',
             'width' => 128,
             'filterable' => false,
+			'hidden' => true
         ],
         [
             'text' => 'Ghi chú',
@@ -147,7 +148,7 @@ class Tag extends AbstractModel
             'datafield' => ['status', [
                 'type' => 'int'
             ]],
-            'width' => 94,
+            'width' => 80,
             'cellsalign' => 'right',
             'sortable' => false,
             'columntype' => 'checkbox',
@@ -265,7 +266,7 @@ class Tag extends AbstractModel
         if (!$ent) {
             $ent = app()->make(static::class);
             $ent->setTagName($name);
-            $ent->setColVal('note', '[auto]');
+            $ent->setColVal('note', $name);
             $ent->save();
         }
         return $ent;

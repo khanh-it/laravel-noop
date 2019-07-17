@@ -95,7 +95,7 @@ abstract class AbstractModel extends Model {
      */
     public static function jqxGridColumns(&$datafields = null, &$columngroups = null)
     {
-        $classname = get_called_class();
+        $classname = \get_called_class();
         $datafields = [];
         $columngroups = [];
         $columns = static::$jqxGridColumns;
@@ -106,19 +106,19 @@ abstract class AbstractModel extends Model {
             foreach ($columns as $idx => &$col)
             {
                 // Modify?
-                if (method_exists($classname, $method = 'jqxGridCol')) {
+                if (\method_exists($classname, $method = 'jqxGridCol')) {
                     $col = $classname::$method($col);
                 }
                 // Datafields:
                 list($dfdName, $dfdProps) = ($datafield = (array)$col['datafield']);
-                if (is_array($dfdName)) {
+                if (\is_array($dfdName)) {
                     $dfdName = $dfdName[0];
                 } else {
                     $dfdName = $dfdName ? ($prefix . $dfdName) : '';
                 }
                 $datafield = (array)$dfdProps;;
                 $datafield['name'] = $dfdName;
-                if (method_exists($classname, $method = 'jqxGridDfd')) {
+                if (\method_exists($classname, $method = 'jqxGridDfd')) {
                     $datafield = $classname::$method($datafield);
                 }
                 $datafields[] = $datafield;
@@ -161,7 +161,7 @@ abstract class AbstractModel extends Model {
             }
             if (!empty($columngroups))
             {
-                $columngroups = array_values($columngroups);
+                $columngroups = \array_values($columngroups);
             }
         }
         return $columns;
@@ -240,6 +240,7 @@ abstract class AbstractModel extends Model {
                 $qB->where(function($join) use ($filterGroup, &$opts) {
                     // $field = $filterGroup['field'];
                     $filters = $filterGroup['filters'];
+                    $oprOr = ($filter['operator'] === 'or');
                     foreach ($filters as $filter)
                     {
                         // Format input
@@ -256,8 +257,7 @@ abstract class AbstractModel extends Model {
                         //.end
                         $value = $filter['value'];
                         $where = 'where';
-                        if ($filter['operator'] === 'or')
-                        {
+                        if ($oprOr) {
                             $where = 'orWhere';
                         }
                         switch ($filter['condition'])
@@ -305,10 +305,10 @@ abstract class AbstractModel extends Model {
                                 $value = "%{$value}";
                                 break;
                             case "NULL":
-                                $where = "whereNull";
+                                $where = $oprOr ? "orWhereNull" : "orWhereNull"; // @TODO: "whereNull"
                                 break;
                             case "NOT_NULL":
-                                $where = "whereNotNull";
+                                $where = $oprOr ? "orWhereNotNull" : "orWhereNotNull"; // @TODO: "whereNotNull"
                                 break;
                         }
                         //

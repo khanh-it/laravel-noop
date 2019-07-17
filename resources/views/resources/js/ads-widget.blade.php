@@ -4,26 +4,21 @@
 --}}
 <!--script--><script>
 (function(g) {
-  var hash = encodeURIComponent("{{$hash}}"),
-    host = ("https://{{$host}}/"),
-    $ads = null
-  ;
   function f($) {
+	var hash = encodeURIComponent("{{$hash}}"), host = "https://{{$host}}/", $ads = null;
+	var css = {"border": "none 0", "outline": "none 0", "overflow": "hidden", "max-width": "100%", "max-height": "100%"};
     try {
-      $ads = $(g._adsWidgetsAsyncInit);
+      $ads = $(g._adsWidgetsAsyncInit).css($.extend({}, css, {
+        "width": {{1 * $data->ads_spec_width}},
+        "height": {{1 * $data->ads_spec_height}}
+      }));
     } catch (e) {}
     if (!$ads || ($ads && !$ads.length)) {
       return console.warn('#ads is missing!');
     }
-    var $ifr = $('<iframe/>')
-    .attr("src", host + "resources/html/ads_frame.html?" + hash + '&_fr=' + location)
-    .css({
-      "border": "none 0", "outline": "none 0",
-      "overflow": "hidden",
-      "max-width": "100%", "width": {{1 * $data->ads_spec_width}},
-      "max-height": "100%", "height": {{1 * $data->ads_spec_height}}
-    })
-    .appendTo($ads);
+    var $ifr = $('<iframe/>').appendTo($ads)
+    .attr({"scrolling": "no", "src": host + "resources/html/ads_frame.html?" + hash + '&_fr=' + location})
+    .css($.extend({}, css, { "width": "100%", "height": "100%" }));
   }
   // Init + execute
   if (typeof jQuery !== 'undefined') {

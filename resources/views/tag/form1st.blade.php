@@ -29,7 +29,7 @@
             ]) !!}
         </div>
     </div>
-    <div class="form-group gen-feedback">
+    <div class="form-group gen-feedback hidden" hidden>
         {!! Form::label('tag_uses', ($label = "Số lần dùng") . "", ['class' => $controlLabel], false) !!}
         <div class="col-xs-9">
             {!! Form::number('tag_uses', 0, [
