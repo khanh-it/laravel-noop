@@ -465,4 +465,45 @@ class Ads extends AbstractModel
         // Return
         return !!($opts['raw'] ?? false) ? $links : \implode('; ', $links);
     }
+
+    /**
+     * Set ads's links
+     * @param string $links
+     * @return $this
+     */
+    public function useLinks($_links)
+    {
+        // Define vars
+        $content = $this->getAdsContent();
+        $links = $this->parseLinks([ 'raw' => true ]);
+
+        // Get, format input
+        $_links = \array_map('trim', \explode(';', \trim($_links)));
+
+        // Case: add new
+        if (!empty($_links) && empty($links)) {
+            $html = \array_map(function($href) {
+                $href = \htmlspecialchars($href);
+                return "<a href=\"{$href}\">{$href}</a>";
+            }, $_links);
+            $html = \implode(\nl2br(PHP_EOL), $html);
+            $content = "{$html}{$content}";
+        }
+        // Case: update
+        if (!empty($links)) {
+            foreach ($links as $idx => $link) {
+                $nextL = \trim($_links[$idx] ?? '');
+                if ($nextL != $link) {
+                    $link = \preg_quote($link, '/');
+                    $content = \preg_replace($p = '/href *= *[\'"]' . $link . '[\'"]/is', "href=\"{$nextL}\"", $content);
+                }
+            }
+        }
+
+        // dd($content);
+        $this->setColVal('content', $content);
+
+        // Return
+        return $this;
+    }
 }

@@ -118,8 +118,6 @@
                 'class' => 'form-control',
                 'placeholder' => $label,
                 'rows' => 3,
-                'readonly' => 'readonly',
-                'disabled' => 'disabled',
             ]) !!}
         </div>
     </div>

@@ -58,10 +58,13 @@ class AdsController extends Controller
                 $model = app()->make(Models\Ads::class);
                 $model->fill($data);
                 $result = $model->statusActive()->save();
-                // +++ tags
                 if ($result) {
                     $model = Models\Ads::find($model->id());
-                    $effected = $model->useTags($data['tags'] ?? '');
+                    // +++ tags
+                    $effected1st = $model->useTags($data['tags'] ?? '');
+                    // +++ links
+                    $model->useLinks($data['links'] ?? '');
+                    $effected2nd = $model->save();
                 }
                 //
 				$response['status'] = !!$result;
@@ -115,8 +118,10 @@ class AdsController extends Controller
 				$data = $validator->getData();
 				$model = Models\Ads::find($data[$ID]);
 				if ($model) {
-					$model->fill($data);
-					$result = $model->save();
+                    $model->fill($data);
+                    // +++ links
+                    $model->useLinks($data['links'] ?? '');
+                    $result = $model->save();
                     // +++ tags
                     if ($result) {
                         $effected = $model->useTags($data['tags'] ?? '');
