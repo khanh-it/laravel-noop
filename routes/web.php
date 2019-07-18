@@ -22,6 +22,28 @@ Route::group([
     // 'name' => '',
     // 'domain' => '',
 ], function() {
+    /** User */
+    $prefix = 'user';
+    Route::group([
+        'prefix' => $prefix,
+    ], function() use ($prefix) {
+        $prefix = "{$prefix}::";
+        $clt = 'UserController@';
+        // Define routes
+        /* Route::any($act = 'index', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get($act = 'create', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}create"]);
+        Route::post($act = 'store', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get(($act = 'edit') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::post(($act = 'update') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get(($act = 'delete') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::post(($act = 'destroy') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get(($act = 'profile') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]); */
+        // change password
+        Route::get(($act = 'change-password'), ['as' => "{$prefix}{$act}", 'uses' => "{$clt}changePassword"]);
+        Route::post(($act = 'change-password/do'), ['as' => "{$prefix}change-password:do", 'uses' => "{$clt}doChangePassword"]);
+    });
+    /** .end#User */
+
     /** Dashboard */
     Route::get('', 'HomeController@index')->name('home');
     /** .end#Dashboard */

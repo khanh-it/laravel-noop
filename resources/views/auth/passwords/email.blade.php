@@ -1,7 +1,7 @@
 @push('content')
 <div class="container">
         <div class="row">
-        <div class="col-md-push-2 col-md-6">
+        <div class="col-xs-12 col-md-push-3 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">{{ __('Reset Password') }}</div>
 
@@ -16,13 +16,13 @@
                         @csrf
 
                         <div class="form-group row">
-                            <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
+                            <label for="email" class="col-md-4 control-label text-md-right">{{ __('E-Mail Address') }}</label>
 
                             <div class="col-md-6">
                                 <input id="email" type="email" class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email" value="{{ old('email') }}" required>
 
                                 @if ($errors->has('email'))
-                                    <span class="invalid-feedback" role="alert">
+                                    <span class="help-block" role="alert">
                                         <strong>{{ $errors->first('email') }}</strong>
                                     </span>
                                 @endif

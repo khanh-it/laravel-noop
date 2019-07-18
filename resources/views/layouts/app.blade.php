@@ -27,7 +27,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     @stack('style')
 </head>
-<body class="clearfix">
+<body class="clearfix @yield('DOM.body.class')">
     <div id="app" class="clearfix">
         {{-- header --}}@yield('header'){{-- /header --}}
         <main id="main" class="clearfix">
