@@ -86,7 +86,7 @@ class ResourcesController extends Controller
             'rpt_uri_to' => $opts['rpt_uri_to'] ?? '',
             'rpt_ua' => $request->userAgent(),
             'rpt_ips' => \implode(', ', $request->ips()),
-            'rpt_extra' => \json_encode($_SERVER)
+            // 'rpt_extra' => \json_encode($_SERVER)
         ]);
         //.end
         // $mobileDetect = app()->make(MobileDetect::class);

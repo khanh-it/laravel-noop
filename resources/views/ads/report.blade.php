@@ -1,3 +1,4 @@
+@section('DOM.body.class'){{'fullwidth fullheight'}}@endsection
 @section('breadcrumb')
 <b>Ads Report: </b>{{$model->ads_name}}
  (width: {{numberFormat($model->ads_spec_width)}}px/ height: {{numberFormat($model->ads_spec_height)}}px)
@@ -21,10 +22,6 @@
 {{-- .end#ads --}}
 @endpush
 @push('style')
-    <style type="text/css">
-        .appnav.appnav-left{display:none;visibility:hidden}
-        body{padding-left:0}
-    </style>
 @endpush
 @push('script')
     <script>

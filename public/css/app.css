@@ -7,9 +7,18 @@ body {
 body.fullwidth {
     padding-left: 0;
 }
+body.fullheight {
+    padding-top: 0;
+}
 .appnav-default {
     background-color: white;
     border: 1px solid transparent;
+}
+body.fullwidth .appnav-left {
+    display: none;
+}
+body.fullheight .appnav-top, body.fullheight .appnav-bottom {
+    display: none;
 }
 .appnav-left {
     position: fixed;

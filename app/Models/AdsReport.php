@@ -79,7 +79,7 @@ class AdsReport extends AbstractModel
         [
             'text' => 'IP',
             'datafield' => 'ips',
-            'width' => 80,
+            'width' => 120,
             'filterable' => false,
             'sortable' => false,
         ],
