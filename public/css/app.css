@@ -9,6 +9,7 @@ body.fullwidth {
 }
 body.fullheight {
     padding-top: 0;
+    padding-bottom: 20px;
 }
 .appnav-default {
     background-color: white;
