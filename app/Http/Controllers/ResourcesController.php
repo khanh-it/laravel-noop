@@ -18,6 +18,11 @@ class ResourcesController extends Controller
     protected $_hash = null;
 
     /**
+     * @var string
+     */
+    protected $_adsId = null;
+
+    /**
      * @var App\Models\Ads
      */
     protected $_adsEnt = null;
@@ -39,7 +44,9 @@ class ResourcesController extends Controller
      */
     protected function _auth(Request $request)
     {
-        $this->_hash = \current($request->keys());
+        $params = \explode(';', \trim(\current($request->keys())));
+        $this->_hash = $params[0] ?? "";
+        $this->_adsId = $params[1] ?? "";
         $id = Models\Ads::decryptPriKey($this->_hash);
         $this->_adsEnt = Models\Ads::find4Resource($id);
         if (!$this->_adsEnt || ($this->_adsEnt && !$this->_adsEnt->isStatusActive())) {
@@ -207,7 +214,8 @@ class ResourcesController extends Controller
         return static::_resJs('resources.js.ads-widget', [
             'host' => $request->getHost(),
             'hash' => $this->_hash,
-            'data' => $this->_adsEnt
+            'adsId' => $this->_adsId,
+            'adsEnt' => $this->_adsEnt
         ]);
     }
 /** .end#Javascript */

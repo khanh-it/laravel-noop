@@ -22,13 +22,12 @@ $host = \Request::getFacadeRoot()->getHost();
 
 @php /* script structure */ \ob_start(); @endphp
 <script type="text/javascript">
-(function(g, d){
-	g._adsWidgetsAsyncInit = '#_ads-__adsid__';
+(function(d){
 	var s = d.createElement('script');
-	s.src = 'https://{{$host}}/resources/js/widget-ads.js?__adshash__';
+	s.src = 'https://{{$host}}/resources/js/widget-ads.js?__adshash__;_ads-__adsid__';
 	s.type = "text/javascript"; s.async = true; s.defer = true;
 	(d.getElementsByTagName('head') || [d.body])[0].appendChild(s);
-})(window, document);
+})(document);
 </script>
 @php $script = \trim(\ob_get_clean()); @endphp
 
@@ -42,7 +41,7 @@ $html = str_replace(
             . \htmlentities('<div id="_ads-__adsid__"></div>')
         . '</pre>',
         '<pre style="font-weight:bold;color:chocolate;">'
-                . \htmlentities($script)
+            . \htmlentities($script)
         . '</pre>',
     ],
     \nl2br($html)
