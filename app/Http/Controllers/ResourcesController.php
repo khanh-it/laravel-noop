@@ -135,11 +135,15 @@ class ResourcesController extends Controller
      */
     public function htmlAdsFrameAction(Request $request)
     {
+        // Get, format request params
+        $rptUriFr = trim($request->input('_fr'));
+
         // Case: click ads?!
         $_rdr = trim($request->input('_rdr'));
         if ($_rdr) {
             // [stat]
             $this->_adsStat($request, 'clicked', [
+                "rpt_uri_fr" => $rptUriFr,
                 'rpt_uri_to' => $_rdr
             ]);
             //.end
@@ -150,11 +154,14 @@ class ResourcesController extends Controller
         // Get, format ads's content
         $adsContent = $this->_adsEnt->getAdsContent();
         // +++
-        $rptUriFr = trim($request->input('_fr'));
-        // +++
         $replaceData = [
-            "query" => \http_build_query([ $this->_hash => '', '_rdr' => '__rdr__' ]),
+            "query" => \http_build_query([
+                $this->_hash => '',
+                '_fr' => '__fr__',
+                '_rdr' => '__rdr__'
+            ]),
             "attr_target" => '_parent',
+            "rpt_uri_fr" => $rptUriFr
         ];
         $p = '/<a[^>]*>/is';
         $adsContent = \preg_replace_callback($p = '/<a[^>]*>/is', function($m) use (&$replaceData) {
@@ -163,7 +170,14 @@ class ResourcesController extends Controller
             $html = \preg_replace_callback($p = '/href *= *[\'"]([^"]*)[\'"]/is', function($m) use (&$replaceData) {
                 $attr = $m[0]; $href = $m[1] ?? null;
                 if ($href) {
-                    $attr = 'href="?' . \str_replace('__rdr__', \rawurlencode($href), $replaceData['query']) . '"';
+                    $attr = 'href="?' . \str_replace(array(
+                            '__fr__',
+                            '__rdr__'
+                        ), array(
+                            \rawurlencode($replaceData['rpt_uri_fr']),
+                            \rawurlencode($href)
+                        ), $replaceData['query'])
+                    . '"';
                 }
                 return $attr;
             }, $html);

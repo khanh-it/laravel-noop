@@ -14,12 +14,12 @@ class Grid extends Widget
      * @var bool
      */
     public $useJqxLayout = true;
- 
+
      /**
       * @var DataAdapter
       */
      public $dataAdapter = null;
- 
+
      /**
       * jQuery Selector to init element!
       * @var string
@@ -86,7 +86,7 @@ class Grid extends Widget
          |  '1'-enables togging. Click on a column toggles the sort direction
          |  '2'-enables remove sorting option
          */
-        'sorttogglestates' => 2, 
+        'sorttogglestates' => 2,
         // groupping props:
         'groups' => Helper::UNDEF,
         'groupable' => Helper::UNDEF,
@@ -96,7 +96,7 @@ class Grid extends Widget
         'showgroupsheader' => Helper::UNDEF,
         //
         'editable' => Helper::UNDEF,
-        // 
+        //
         'selectionmode' => Helper::UNDEF,
         //
         'editmode' => Helper::UNDEF,
@@ -191,7 +191,7 @@ class Grid extends Widget
         'editable' => Helper::UNDEF,
         // classname - sets a custom CSS class for the column's header
         'classname' => Helper::UNDEF,
-        // sets a custom CSS class for the column's cells. The value could be a "String" or "Function". 
+        // sets a custom CSS class for the column's cells. The value could be a "String" or "Function".
         // Apply a CSS class to all cells in the column.
         'cellclassname' => Helper::UNDEF,
         // pins or unpins the column. If the column is pinned, it will be displayed as frozen and will be visible when the user horizontally scrolls the grid contents.
@@ -215,7 +215,7 @@ class Grid extends Widget
             'custom' - sets a custom editor as a default editor for a cell. That setting enables you to have multiple editors in a Grid column. The editors should be created in the "createeditor" callback - it is called for each row when the "columntype=custom". The editors should be synchronized with the cell's value in the "initeditor" callback. The editor's value should be retrieved in the "geteditorvalue" callback.
         */
         'columntype' => 'textbox',
-        /* sets the filter's type. 
+        /* sets the filter's type.
             'textbox' - basic text field.
             'input' - input field with dropdownlist for choosing the filter condition. *Only when "showfilterrow" is true.
             'checkedlist' - dropdownlist with checkboxes that specify which records should be visible and hidden.
@@ -230,12 +230,12 @@ class Grid extends Widget
         // sets the items displayed in the list filter - when the "showfilterrow" property value is true and the filter's type is "list" or "checkedlist".
         // The expected value is Array or jqxDataAdapter instance
         'filteritems' => Helper::UNDEF,
-        /* sets the formatting of the grid cells. Possible Number strings: 
-            "d" - decimal numbers. 
-            "f" - floating-point numbers. 
-            "n" - integer numbers. 
-            "c" - currency numbers. 
-            "p" - percentage numbers. 
+        /* sets the formatting of the grid cells. Possible Number strings:
+            "d" - decimal numbers.
+            "f" - floating-point numbers.
+            "n" - integer numbers.
+            "c" - currency numbers.
+            "p" - percentage numbers.
         */
         'cellsformat' => Helper::UNDEF,
         // cellsalign - sets the cells alignment to 'left', 'center' or 'right'.
@@ -292,14 +292,14 @@ class Grid extends Widget
             'width' => 30,
             'align' => 'center',
             'cellsalign' => 'center',
-            'cellsrenderer' => null,
+            'cellsrenderer' => "{!!function(row) { return '<div class=\"text-center\" style=\"padding:8px 4px;\">' + (row + 1) + '</div>'; }!!}",
         ]);
         // +++ dataAdapter
         $this->dataAdapter = new DataAdapter();
     }
 
     /**
-     * 
+     *
      *
      * @return App\Helpers\Jqx\Grid\DataAdapter
      */

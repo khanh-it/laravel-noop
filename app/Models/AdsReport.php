@@ -80,8 +80,8 @@ class AdsReport extends AbstractModel
             'text' => 'IP',
             'datafield' => 'ips',
             'width' => 120,
-            'filterable' => false,
-            'sortable' => false,
+            'filterable' => true,
+            'sortable' => true,
         ],
         [
             'text' => 'Uri tải',
@@ -103,10 +103,10 @@ class AdsReport extends AbstractModel
         ],
         [
             'text' => 'Thời gian',
-            'width' => 140,
+            'width' => 200,
             'datafield' => 'created_at',
             'cellsalign' => 'center',
-            'filterable' => false,
+            'filtertype' => 'range',
             // 'sortable' => false,
         ],
         [ 'datafield' => 'updated_at' ],
@@ -196,6 +196,11 @@ class AdsReport extends AbstractModel
                 {
                     if (($prop = 'rpt_type') === $filter['field']) {
                         $value = $filter['value'] = $typeListFlip[$value];
+                    }
+                    // Filter type 'range'...
+                    if ('rpt_created_at' === $filter['field']) {
+                        $value = static::parseDateTimeJqx($value);
+                        $filter['value'] = $value->format('Y-m-d H:i:s');
                     }
                 }
         ]);
