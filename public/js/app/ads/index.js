@@ -22,7 +22,14 @@
         function handleActions(evt) {
             // @TODO
             $jqxWindow.attr('data-jqxaction', evt.action);
-            //
+            // @var Array
+            var winOpProps = [
+                'width=1024',
+                'height=768',
+                'menubar=0',
+                'status=0',
+                'titlebar=0'
+            ];
             // Case: create
             if ('create' === evt.action) {
                 // Reset, refill form data
@@ -72,19 +79,20 @@
                 var cWin = $(window).data('_cWinRpt_Ads');
                 var url = (phpData.routes.report.replace('_id_', evt.row.rowid));
                 if (!cWin || (('closed' in cWin) && cWin.closed)) {
-                    cWin = window.open(
-                        url,
-                        $.myUtils.js._('Thống kê'),
-                        [
-                            'width=1024',
-                            'height=768',
-                            'menubar=0',
-                            'status=0',
-                            'titlebar=0'
-                        ].join(','),
-                        true
-                    );
+                    cWin = window.open(url, $.myUtils.js._('Xem dữ liệu thống kê theo quảng cáo'), winOpProps.join(','), true);
                     $(window).data('_cWinRpt_Ads', cWin);
+                } else {
+                    cWin.location = url;
+                }
+                cWin.focus();
+            }
+            // rpt-all
+            if ('rpt-all' === evt.action) {
+                var cWin = $(window).data('_cWinRptAll_Ads');
+                var url = (phpData.routes.report.replace('/_id_', ''));
+                if (!cWin || (('closed' in cWin) && cWin.closed)) {
+                    cWin = window.open(url, $.myUtils.js._('Xem tất cả dữ liệu thống kê'), winOpProps.join(','), true);
+                    $(window).data('_cWinRptAll_Ads', cWin);
                 } else {
                     cWin.location = url;
                 }
@@ -119,7 +127,16 @@
                 "class" : "btn btn-sm btn-primary",
                 "icon" : "glyphicon glyphicon-stats",
                 "text" : "Report",
-                "title" : "Thống kê"
+                "title" : "Xem dữ liệu thống kê theo quảng cáo",
+                "children" : [
+                    {
+                        "toolbar": "rpt-all",
+                        "class" : "",
+                        "icon" : "glyphicon glyphicon-stats",
+                        "text" : "Report all",
+                        "title" : "Xem tất cả dữ liệu thống kê",
+                    }
+                ]
             });
         });
         //.end

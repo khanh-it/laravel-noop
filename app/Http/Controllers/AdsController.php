@@ -246,13 +246,19 @@ class AdsController extends Controller
 	public function read($data, $jqxLayout)
 	{
 		// Prepare the data
-		$readtype = Request::get('_readtype');
-		$model;
+        $readtype = Request::get('_readtype');
+        $alterData = Request::get('_alterData');
+        // +++ --- alter data?
+        if (\is_callable($alterData)) {
+            $alterData($data);
+        }
+        $model;
 		switch ($readtype) {
-			case 'report':
-				$model = app()->make(Models\AdsReport::class);
-				$model->forAds(Request::get('ads'));
-				break;
+            case 'report':
+                $model = app()->make(Models\AdsReport::class);
+                $adsModel = Request::get('ads');
+                ($adsModel instanceof Models\Ads) && $model->forAds($adsModel);
+                break;
 			default:
 				$model = app()->make(Models\Ads::class);
 		}
@@ -267,21 +273,52 @@ class AdsController extends Controller
 	/**
 	 * Report
 	 */
-	public function report($id, Request $request)
+	public function report($id = null, Request $request)
 	{
 		// Fetch data
-		$model = Models\Ads::find($id);
-		if (!$model) {
+		$model = $id ? Models\Ads::find($id) : null;
+		if ($id && !$model) {
 			abort(404);
         }
+        // +++
+        $act = strtolower($request::query('act'));
+        // +++ --- report delete?!
+        $isActRptDel = ('rpt-del' === $act) || ('rpt-del-all' === $act);
+        // +++ --- report excel?!
+        $isActRptExcel = ('rpt-excel' === $act) || ('rpt-excel-all' === $act);
 
         // Handle CRUD requests!
         Request::merge([
             '_readtype' => 'report',
             'ads' => $model
         ]);
+        // +++ report delete
+        if ($isActRptDel) {
+            Request::merge([
+                '_alterData' => function(&$data) {
+                    $data['_delete'] = true;
+                },
+            ]);
+        }
+        //.end
 		$response = \JqxLayout::onRequestRead([$this, 'read']);
 		if ($response) {
+            // Report delete?!
+            if ($isActRptDel) {
+                return redirect()->back();
+            }
+            //.end
+            // Report excel?!
+            // +++ Render view --> download file?!
+            if ($isActRptExcel) {
+                // Render view --> download file?!
+                \App\Helpers\Exporter::downloadExcel($filename = "AdsReport" . ("_" . \date('YmdHi')));
+                $data = $response->getData();
+                return view('ads.report-excel', compact([ 'model', 'data' ]));
+            }
+            //.end
+
+            // Normal response --> list data!
 			return $response;
 		}
 		//.end
@@ -313,8 +350,9 @@ class AdsController extends Controller
 		// +++ +++ form: CRUD ads
 		$jqxForm = app()->make(Jqx\Form::class);
 
-		// Render view
-		return view('ads.report', compact([
+        // Render view
+        $view = 'ads.report';
+		return view($view, compact([
             'model',
 			'jqxGrid',
             'jqxWindow',
@@ -348,7 +386,7 @@ class AdsController extends Controller
                 'show' => route('ads::show', '_id_'),
 				'update' => route('ads::update', '_id_'),
 				'delete' => route('ads::destroy', '_id_'),
-				'report' => route('ads::report', '_id_'),
+                'report' => route('ads::report', '_id_'),
 			]
 		]);
 		// +++ ads

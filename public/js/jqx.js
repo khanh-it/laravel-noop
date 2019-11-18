@@ -718,7 +718,7 @@
                 "recordstartindex": opts.startindex || 0,
                 "recordendindex": opts.endindex || 30,
                 "filterGroups": filterGroups,
-                "groupGroups":[],
+                "groupGroups": [],
                 "_": (new Date()).getTime()
             };
 
@@ -760,16 +760,37 @@
             //.end
             // Render toolbar item(s)
             $.each(this.tbItems, function(index, tbItem) {
-                var html = ('<a href="'
-                        + $.trim(tbItem.href || 'javascript:void(0);')
-                        + '" class="' + $.trim(tbItem.class)
-                        + '" role="button" data-toolbar="' + $.trim(tbItem.toolbar)
-                        + '" data-index="' + $.trim(index)
-                        + '" title="' + $.trim(tbItem.title || tbItem.text)
-                        + '" target="' + $.trim(tbItem.target)
-                    + '">')
-                    + '<i class="' + tbItem.icon + '"></i> ' + tbItem.text
-                + '</a>';
+                var html = '<div class="btn-group">'
+                    + '<a href="'
+                            + $.trim(tbItem.href || 'javascript:void(0);')
+                            + '" class="' + $.trim(tbItem.class)
+                            + '" role="button" data-toolbar="' + $.trim(tbItem.toolbar)
+                            + '" data-index="' + $.trim(index)
+                            + '" title="' + $.trim(tbItem.title || tbItem.text)
+                            + '" target="' + $.trim(tbItem.target)
+                        + '"><i class="' + tbItem.icon + '"></i> ' + tbItem.text
+                    + '</a>'
+                    + ((tbItem.children instanceof Array) ? (
+                        '<button type="button" class="' + $.trim(tbItem.class) + ' dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'
+                            + '<span class="caret"></span><span class="sr-only">Toggle Dropdown</span>'
+                        + '</button>'
+                        + '<ul class="dropdown-menu">'
+                        + tbItem.children.map(function(item) {
+                            return '<li' + (item.divider ? ' role="separator" class="divider"' : '') + '>'
+                                + (item.divider ? '' : ('<a href="'
+                                    + $.trim(item.href || 'javascript:void(0);')
+                                    + '" class="' + $.trim(item.class)
+                                    + '" role="button" data-toolbar="' + $.trim(item.toolbar)
+                                    + '" data-index="' + $.trim(index)
+                                    + '" title="' + $.trim(item.title || item.text)
+                                    + '" target="' + $.trim(item.target)
+                                + '">' + (item.icon ? '<i class="' + $.trim(item.icon) + '"></i> ' : '') +  $.trim(item.text)
+                                + '</a>'))
+                            + '</li>'
+                        }).join('')
+                        + '</ul>'
+                    ) : '')
+                + '</div>';
                 _this.addToolbar(html, tbItem.type, tbItem.sep);
             });
             // +++ Binding events

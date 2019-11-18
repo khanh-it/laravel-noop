@@ -22,6 +22,18 @@
             // @TODO
             $jqxWindow.attr('data-jqxaction', evt.action);
             //
+            var $myGrid = mJWids.$grid;
+            // @var {Function}
+            // Helper: remove paging params
+            function urlAll(url) {
+                return url
+                    .replace(/&?pagenum=\d+/g, '')
+                    .replace(/&?recordstartindex=\d+/g, '')
+                    .replace(/&?recordendindex=\d+/g, '')
+                    .replace(/&?pagesize=\d+/g, '&pagesize=' + (Math.pow(2, 31) - 1))
+                ;
+            }
+            //
             if ('show' === evt.action) {
                 if (evt.row) {
                     // Modify data
@@ -43,6 +55,44 @@
                 window.close();
                 evt.break = true;
             }
+            // rpt: del
+            var actRptDel = null, actRptDelAll = null;
+            if (('rpt-del' === evt.action) || (actRptDelAll = ('rpt-del-all' === evt.action))) {
+                actRptDel = evt.action;
+            }
+            if (actRptDel) {
+                var result = window.confirm("LƯU Ý: THAO TÁC XÓA DỮ LIỆU KHÔNG THỂ PHỤC HỒI. Bạn vui lòng xác nhận xóa dữ liệu thống kê?!");
+                if (result) {
+                    $myGrid.one('jqxGrid.source.beforesend', function(evt, jqXHR, settings) {
+                        var url = (settings.url + ('&act=' + actRptDel));
+                        if (actRptExcelAll) {
+                            url = urlAll(url);
+                        }
+                        jqXHR.abort(); // prevent ajax call
+                        location.assign(url);
+                    });
+                    $myGrid.triggerHandler('jqxGrid.updatebounddata');
+                    $myGrid.jqxGrid('hideloadelement');
+                }
+            }
+            //.end
+            // rpt: excel
+            var actRptExcel = null, actRptExcelAll = null;
+            if (('rpt-excel' === evt.action) || (actRptExcelAll = ('rpt-excel-all' === evt.action))) {
+                actRptExcel = evt.action;
+            }
+            if (actRptExcel) {
+                $myGrid.one('jqxGrid.source.beforesend', function(evt, jqXHR, settings) {
+                    var url = (settings.url + ('&act=' + actRptExcel));
+                    if (actRptExcelAll) {
+                        url = urlAll(url);
+                    }
+                    jqXHR.abort(); // prevent ajax call
+                    location.assign(url);
+                });
+                $myGrid.triggerHandler('jqxGrid.updatebounddata');
+                $myGrid.jqxGrid('hideloadelement');
+            }
             //.end
             return evt.break;
         }
@@ -61,10 +111,46 @@
             // toolbar: tro lai man hinh danh sach
             tbItems.push({
                 "toolbar": "close",
-                "class" : "btn btn-sm btn-danger",
+                "class" : "btn btn-sm btn-warning",
                 "icon" : "glyphicon glyphicon-remove-circle",
                 "text" : "Đóng",
                 "title" : "Đóng",
+                "default": true,
+            });
+            // xoa du lieu theo trang hien tai
+            tbItems.push({
+                "toolbar": "rpt-del",
+                "class" : "btn btn-sm btn-danger",
+                "icon" : "glyphicon glyphicon-trash",
+                "text" : "Xóa dữ liệu",
+                "title" : "Xóa dữ liệu theo trang",
+                "default": true,
+            });
+            // xoa tat ca du lieu
+            tbItems.push({
+                "toolbar": "rpt-del-all",
+                "class" : "btn btn-sm btn-danger",
+                "icon" : "glyphicon glyphicon-trash",
+                "text" : "Xóa tất cả",
+                "title" : "Xóa tất cả dữ liệu",
+                "default": true,
+            });
+            // export excel du lieu theo trang hien tai
+            tbItems.push({
+                "toolbar": "rpt-excel",
+                "class" : "btn btn-sm btn-success",
+                "icon" : "glyphicon glyphicon-download-alt",
+                "text" : "Xuất excel",
+                "title" : "Xuất excel dữ liệu theo trang",
+                "default": true,
+            });
+            // export excel tat ca du lieu
+            tbItems.push({
+                "toolbar": "rpt-excel-all",
+                "class" : "btn btn-sm btn-success",
+                "icon" : "glyphicon glyphicon-download-alt",
+                "text" : "Xuất excel tất cả",
+                "title" : "Xuất excel tất cả dữ liệu",
                 "default": true,
             });
         });

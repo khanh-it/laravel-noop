@@ -37,18 +37,18 @@ class DataAdapter
     public $varDataAdapterName = 'dataAdapter';
 
     /**
-     * 
+     *
      * @var boolean
      */
     public $autoBind = Helper::UNDEF;
 
     /**
-     * 
+     *
      * @var Closure|null
      */
     protected $_beforeLoadComplete = Helper::UNDEF;
     /**
-     * 
+     *
      * @param $fnc Closure
      * @return void
      */
@@ -57,12 +57,12 @@ class DataAdapter
     }
 
     /**
-     * 
+     *
      * @var Closure|null
      */
     protected $_loadComplete = Helper::UNDEF;
     /**
-     * 
+     *
      * @param $fnc Closure
      * @return void
      */
@@ -71,12 +71,12 @@ class DataAdapter
     }
 
     /**
-     * 
+     *
      * @var Closure|null
      */
     protected $_loadError = Helper::UNDEF;
     /**
-     * 
+     *
      * @param $fnc Closure
      * @return void
      */
@@ -124,7 +124,7 @@ JS
         // By setting the format, the jqxDataAdapter plug-in will try to format the data before loading it.
         // Example: { name: 'SubmitDate', type: 'date', format: "yyyy-MM-ddTHH:mm:ss-HH:mm" }
         'format' => Helper::UNDEF,
-        // (optional) - A mapping to the data field. 
+        // (optional) - A mapping to the data field.
         // Example with XML data:
         // { name: 'CompanyName', map: 'm\\:properties&gt;d\\:CompanyName' }
         // Example with nested JSON data.
@@ -200,10 +200,13 @@ JS
         // callback function called when a filter is applied or removed.
         // function (filters, recordsArray) {}
         'filter' => Helper::UNDEF,
+        //
+        'beforesend' => Helper::UNDEF,
+        'beforeSend' => Helper::UNDEF,
         // callback function, called when a new row is/are added. If multiple rows are added, the rowid and rowdata parameters are arrays of row ids and rows.
         /* function (rowid, rowdata, position, commit) {
             // synchronize with the server - send insert command
-            // call commit with parameter true if the synchronization with the server is successful 
+            // call commit with parameter true if the synchronization with the server is successful
             //and with parameter false if the synchronization failed.
             commit(true);
         } */
@@ -211,7 +214,7 @@ JS
         // callback function, called when a row is deleted. If multiple rows are deleted, the rowid parameter is an array of row ids.
         /* function (rowid, commit) {
             // synchronize with the server - send delete command
-            // call commit with parameter true if the synchronization with the server is successful 
+            // call commit with parameter true if the synchronization with the server is successful
             //and with parameter false if the synchronization failed.
             commit(true);
         } */
@@ -219,7 +222,7 @@ JS
         // callback function, called when a row is updated. If multiple rows are added, the rowid and rowdata parameters are arrays of row ids and rows.
         /* function (rowid, newdata, commit) {
             // synchronize with the server - send update command
-            // call commit with parameter true if the synchronization with the server is successful 
+            // call commit with parameter true if the synchronization with the server is successful
             // and with parameter false if the synchronization failed.
             commit(true);
         } */
@@ -247,7 +250,7 @@ JS
      * An array of datafield
      * @var array
      */
-    protected $_datafields = []; 
+    protected $_datafields = [];
 
     /**
      * Add datafield
@@ -319,6 +322,8 @@ JS
             'sort' => Helper::UNDEF,
             'filter' => Helper::UNDEF,
             'beforeprocessing' => Helper::UNDEF,
+            'beforesend' => Helper::UNDEF,
+            'beforeSend' => Helper::UNDEF,
 			'localdata' => Helper::jsFunc(Helper::toJson($localdata)),
 			'datatype' => 'array'
         ]);
@@ -339,8 +344,11 @@ JS
     public function getSourceAsJson()
     {
         $source = array_replace($this->_source, [
-            $key = 'data' => array_replace($this->_sourceData, (array)$this->_source[$key]),
-            'datafields' => $this->_datafields
+            $key = 'data' => Helper::jsFunc('$.extend('
+                 . Helper::toJson(array_replace($this->_sourceData, (array)$this->_source[$key]))
+                . ', {})'
+            ),
+            $key = 'datafields' => $this->_datafields
         ]);
         $source = Helper::toJson($source);
         //
