@@ -5,6 +5,8 @@ html, body, #app {height: 100%;}
 /* --- page-toolbar */
 #page-toolbar {
     border-color: #e7e7e7;
+    float: left;
+    overflow: visible;
 }
 #page-toolbar .jqx-toolbar-tool {
     margin-right: 4px !important;

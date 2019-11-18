@@ -145,9 +145,7 @@ class AdsReport extends AbstractModel
     public function jqxFetchRecordList(array $data, &$qB = null, &$totalRowsQB = null)
     {
         // Define vars
-        if (!($this->_ads instanceof Ads)) {
-            throw new \Exception('$ads is missing!');
-        }
+        // if (!($this->_ads instanceof Ads)) { throw new \Exception('$ads is missing!'); }
         // +++
         $typeList = Rpt::typeList();
         $typeListFlip = \array_flip($typeList);
@@ -185,8 +183,14 @@ class AdsReport extends AbstractModel
                         , ("{$tables['tag']}." . ($pK = $models['tag']->getKeyName()))
                         , '=', "{$tables['rel']}." . $models['rel']->columnName('ref02')
                     ); */
-                    // Limit by relationships
-                    $qB->where(static::columnName('ads_id'), $this->_ads->id());
+                    // Limit by relationships?!
+                    if ($this->_ads) {
+                        $qB->where(static::columnName('ads_id'), $this->_ads->id());
+                    }
+                    // Limit by primary id
+                    if (!empty($data['pid'])) {
+                        $qB->whereIn(static::columnName('id'), $data['pid']);
+                    }
                     // dd($qB->toSql());
                 }
             ,
@@ -204,7 +208,11 @@ class AdsReport extends AbstractModel
                     }
                 }
         ]);
-        // dump($data);die($qB->toSql());
+        // dump($data); die($qB->toSql());
+        // Case: delete data
+        if (isset($data['_delete']) && true === $data['_delete']) {
+            return $qB->delete();
+        }
         // Format data
 		// +++
         $rows = $qB->get()->map(function($row, $idx)

@@ -64,7 +64,7 @@ class Grid extends Widget
         //
         'pageable' => true,
         'pagesize' => 30,
-        'pagesizeoptions' => ['15', '30', '45','80'],
+        'pagesizeoptions' => ['15', '30', '45', '90'],
         //
         'virtualmode' => true,
         //
@@ -475,6 +475,15 @@ JS
     protected function _initSource()
     {
         $source = $this->dataAdapter->getSource();
+        //
+        if (Helper::UNDEF === $source['beforesend']) {
+            $source['beforesend'] = Helper::jsFunc(<<<JS
+    function (jqXHR, settings) {
+        $('{$this->selector}').triggerHandler('jqxGrid.source.beforesend', [jqXHR, settings]);
+    }
+JS
+            );
+        }
         //
         if (Helper::UNDEF === $source['filter']) {
             $source['filter'] = Helper::jsFunc(<<<JS

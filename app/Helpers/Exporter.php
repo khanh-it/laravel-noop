@@ -13,7 +13,7 @@ class Exporter
      */
     public static function txtCompanyName(array $options = array())
     {
-        return '';
+        return 'bannersys.zoharb.com';
     }
 
     /**
