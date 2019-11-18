@@ -187,6 +187,10 @@ class AdsReport extends AbstractModel
                     if ($this->_ads) {
                         $qB->where(static::columnName('ads_id'), $this->_ads->id());
                     }
+                    // Limit by primary id
+                    if (!empty($data['pid'])) {
+                        $qB->whereIn(static::columnName('id'), $data['pid']);
+                    }
                     // dd($qB->toSql());
                 }
             ,
@@ -204,7 +208,7 @@ class AdsReport extends AbstractModel
                     }
                 }
         ]);
-        // dump($data);die($qB->toSql());
+        // dump($data); die($qB->toSql());
         // Case: delete data
         if (isset($data['_delete']) && true === $data['_delete']) {
             return $qB->delete();

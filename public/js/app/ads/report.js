@@ -55,43 +55,50 @@
                 window.close();
                 evt.break = true;
             }
-            // rpt: del
+            // rpt: del + excel
             var actRptDel = null, actRptDelAll = null;
             if (('rpt-del' === evt.action) || (actRptDelAll = ('rpt-del-all' === evt.action))) {
                 actRptDel = evt.action;
             }
-            if (actRptDel) {
-                var result = window.confirm("LƯU Ý: THAO TÁC XÓA DỮ LIỆU KHÔNG THỂ PHỤC HỒI. Bạn vui lòng xác nhận xóa dữ liệu thống kê?!");
-                if (result) {
-                    $myGrid.one('jqxGrid.source.beforesend', function(evt, jqXHR, settings) {
-                        var url = (settings.url + ('&act=' + actRptDel));
-                        if (actRptExcelAll) {
-                            url = urlAll(url);
-                        }
-                        jqXHR.abort(); // prevent ajax call
-                        location.assign(url);
-                    });
-                    $myGrid.triggerHandler('jqxGrid.updatebounddata');
-                    $myGrid.jqxGrid('hideloadelement');
-                }
-            }
-            //.end
-            // rpt: excel
             var actRptExcel = null, actRptExcelAll = null;
             if (('rpt-excel' === evt.action) || (actRptExcelAll = ('rpt-excel-all' === evt.action))) {
                 actRptExcel = evt.action;
             }
-            if (actRptExcel) {
-                $myGrid.one('jqxGrid.source.beforesend', function(evt, jqXHR, settings) {
-                    var url = (settings.url + ('&act=' + actRptExcel));
-                    if (actRptExcelAll) {
-                        url = urlAll(url);
+            if (actRptDel || actRptExcel) {
+                var rows = $myGrid.jqxGrid('getrows');
+                var pid = [];
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    if (row) { pid.push(row.rpt_id); }
+                }
+                if (pid.length > 0) {
+                    pid = ('&pid=' + pid.join());
+                    if (actRptDel) {
+                        var result = window.confirm("LƯU Ý: THAO TÁC XÓA DỮ LIỆU KHÔNG THỂ PHỤC HỒI. Vui lòng xác nhận xóa dữ liệu thống kê.");
+                        if (result) {
+                            $myGrid.one('jqxGrid.source.beforesend', function(evt, jqXHR, settings) {
+                                var url = urlAll(settings.url + (!actRptDelAll ? pid : '') + ('&act=' + actRptDel));
+                                jqXHR.abort(); // prevent ajax call
+                                location.assign(url);
+                            });
+                            $myGrid.triggerHandler('jqxGrid.updatebounddata');
+                        }
                     }
-                    jqXHR.abort(); // prevent ajax call
-                    location.assign(url);
-                });
-                $myGrid.triggerHandler('jqxGrid.updatebounddata');
-                $myGrid.jqxGrid('hideloadelement');
+                    // +++
+                    if (actRptExcel) {
+                        $myGrid.one('jqxGrid.source.beforesend', function(evt, jqXHR, settings) {
+                            var url = urlAll(settings.url + (!actRptExcelAll ? pid : '') + ('&act=' + actRptExcel));
+                            jqXHR.abort(); // prevent ajax call
+                            location.assign(url);
+                            setTimeout(function() {
+                                $myGrid.triggerHandler('jqxGrid.updatebounddata');
+                            });
+                        });
+                        $myGrid.triggerHandler('jqxGrid.updatebounddata');
+                    }
+                } else {
+                    alert("Chưa có dữ liệu thao tác.");
+                }
             }
             //.end
             return evt.break;

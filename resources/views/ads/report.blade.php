@@ -3,7 +3,7 @@
 <span class="label label-primary">Ads Report:</span>&nbsp;
 @if ($model)
 <span class="label label-info">{{$model->ads_name}}</span>
-&nbsp;<span class="label label-success">
+<span class="label label-success">
 (width: {{numberFormat($model->ads_spec_width)}}px/ height: {{numberFormat($model->ads_spec_height)}}px)
  ({{_("Tải")}}: {{numberFormat($model->ads_uses)}}/ {{_("Xem")}}: {{numberFormat($model->ads_viewed)}}/  {{_("CLick")}}: {{numberFormat($model->ads_clicked)}})
 </span>

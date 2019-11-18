@@ -64,7 +64,7 @@ class Grid extends Widget
         //
         'pageable' => true,
         'pagesize' => 30,
-        'pagesizeoptions' => ['15', '30', '45', '90', '180'],
+        'pagesizeoptions' => ['15', '30', '45', '90'],
         //
         'virtualmode' => true,
         //

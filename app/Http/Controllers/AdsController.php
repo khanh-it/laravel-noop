@@ -286,20 +286,22 @@ class AdsController extends Controller
         $isActRptDel = ('rpt-del' === $act) || ('rpt-del-all' === $act);
         // +++ --- report excel?!
         $isActRptExcel = ('rpt-excel' === $act) || ('rpt-excel-all' === $act);
+        // +++ primary ids
+        $pid = trim($request::query('pid'));
+        if ($pid) {
+            $pid = explode(',', $pid);
+        }
 
         // Handle CRUD requests!
         Request::merge([
             '_readtype' => 'report',
-            'ads' => $model
+            'ads' => $model,
+            '_alterData' => function(&$data) use ($isActRptDel, $pid) {
+                $data['pid'] = $pid;
+                // +++ report delete
+                $isActRptDel && ($data['_delete'] = true);
+            },
         ]);
-        // +++ report delete
-        if ($isActRptDel) {
-            Request::merge([
-                '_alterData' => function(&$data) {
-                    $data['_delete'] = true;
-                },
-            ]);
-        }
         //.end
 		$response = \JqxLayout::onRequestRead([$this, 'read']);
 		if ($response) {

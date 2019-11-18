@@ -82,7 +82,7 @@ Route::group([
         Route::match(['get', 'post'], ($act = 'show') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
         Route::get(($act = 'delete') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
         Route::post(($act = 'destroy') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
-        Route::get(($act = 'report') . '/{id}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
+        Route::get(($act = 'report') . '/{id?}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
     });
     /** .end#Ads */
 });
