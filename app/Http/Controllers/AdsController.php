@@ -280,6 +280,9 @@ class AdsController extends Controller
 		if ($id && !$model) {
 			abort(404);
         }
+        /* DEBUG: if ($model) { Models\AdsReport::updateAdsReportStats($model->id()); }
+        else { Models\AdsReport::clearAdsReportStats(); }
+        die(); */
         // +++
         $act = strtolower($request::query('act'));
         // +++ --- report delete?!
@@ -337,7 +340,10 @@ class AdsController extends Controller
 		$adsColumns = Models\AdsReport::jqxGridColumns($adsDfds, $adsCgs);
 		$jqxGrid = app()->make(Jqx\Grid::class);
 		// @TODO: tat tinh nang filter, do bug groups --> hien thi sai khi co filter!
-		// $jqxGrid->setProps([]);
+		$jqxGrid->setProps([
+            'selectionmode' => 'checkbox',
+            'altrows' => false,
+        ]);
 		$jqxGrid->addColumns($adsColumns, $adsDfds, $adsCgs);
 		// +++ +++ window:
 		$jqxWindow = app()->make(Jqx\Window::class, ['options' => [

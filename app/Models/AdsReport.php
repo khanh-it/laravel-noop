@@ -211,7 +211,34 @@ class AdsReport extends AbstractModel
         // dump($data); die($qB->toSql());
         // Case: delete data
         if (isset($data['_delete']) && true === $data['_delete']) {
-            return $qB->delete();
+            // Limit by primary id?!
+            $adIds = [];
+            if (!empty($data['pid'])) {
+                $cloneQB = clone $qB;
+                $cloneQB
+                    ->select($colAdsId = static::columnName('ads_id'))
+                    ->groupBy($colAdsId)
+                ;
+                $adIds = $cloneQB->get()->keyBy($colAdsId)->keys()->toArray();
+            }
+            // Delete data
+            $qbResult = $qB->delete();
+            // Reset/Clear report stats
+            if ($this->_ads) {
+                static::updateAdsReportStats($this->_ads->id());
+            } else {
+                // Limit by primary id?!
+                if (!empty($adIds)) {
+                    foreach ($adIds as $adId) {
+                        static::updateAdsReportStats($adId);
+                    }
+                // Case: delete all
+                } else {
+                    static::clearAdsReportStats();
+                }
+            }
+            //
+            return $qbResult;
         }
         // Format data
 		// +++
@@ -228,5 +255,60 @@ class AdsReport extends AbstractModel
 
         // Return
         return $rows;
-	}
+    }
+
+    /**
+     * @param int|string $adsId Ads id
+     * @param array $opts An array of options
+     */
+    public static function updateAdsReportStats($adsId, array $opts = [])
+    {
+        // Get, format options
+        // +++
+
+        // Build query
+        $qB = static::whereRaw(1)
+            ->select(
+                // $colAdsId = static::columnName('ads_id'),
+                $colType = static::columnName('type'),
+                \DB::raw('COUNT(*) AS `cnt`')
+            )
+            ->where(static::columnName('ads_id'), $adsId)
+            ->groupBy(/*$colAdsId, */$colType)
+        ;
+        // dd($qB->toSql());
+        // Fetch
+        $data = [];
+        $qB->chunk(/* @TODO: */128, function($rptEnts) use (&$data, $colType) {
+            foreach ($rptEnts as $rptEnt) {
+                $data[$prop = $rptEnt->{$colType}] = $data[$prop] ?? 0;
+                $data[$prop] += $rptEnt->cnt;
+            }
+            return false;
+        });
+        //.end
+
+        // Build query for update
+        return Ads::where(Ads::columnName('id'), $adsId)->update([
+            Ads::columnName('uses') => $data[Rpt::TYPE_USES] ?? 0,
+            Ads::columnName('viewed') => $data[Rpt::TYPE_VIEWED] ?? 0,
+            Ads::columnName('clicked') => $data[Rpt::TYPE_CLICKED] ?? 0
+        ]);
+    }
+
+    /**
+     * @param array $opts An array of options
+     */
+    public static function clearAdsReportStats(array $opts = [])
+    {
+        // Get, format options
+        // +++
+
+        // Build query for update
+        return Ads::whereRaw(1)->update([
+            Ads::columnName('uses') => 0,
+            Ads::columnName('viewed') => 0,
+            Ads::columnName('clicked') => 0
+        ]);
+    }
 }

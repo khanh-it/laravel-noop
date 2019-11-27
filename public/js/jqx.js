@@ -442,9 +442,7 @@
          */
         getRowSelected: function($grid, rowindex) {
             var _this = this;
-            if (!$grid) {
-                $grid = _this.$grid;
-            }
+            $grid = $grid || _this.$grid;
             rowindex = (undefined === rowindex) ? $grid.jqxGrid('getselectedrowindex') : rowindex;
             var rowdata = null;
             var rowid = null;
@@ -457,6 +455,43 @@
                 $.extend(rowdata, { 'rowid': rowid });
             }
             return rowdata;
+        },
+        /**
+         * @param object $grid The grid (if any)
+         * @return null|Array
+         */
+        getSelectedRowIndexes: function($grid, opts) {
+            var _this = this;
+            opts = $.extend({}, opts);
+            $grid = $grid || _this.$grid;
+            var idxs = [];
+            var pagingInfo = $grid.jqxGrid('getpaginginformation');
+            var min = pagingInfo.pagenum * pagingInfo.pagesize;
+            var max = (pagingInfo.pagenum + 1) * pagingInfo.pagesize;
+            var selectedRowIdxs = $grid.jqxGrid('getselectedrowindexes') || [];
+            $.each(selectedRowIdxs, function(_, idx) {
+                (idx >= min && idx <= max) && idxs.push(
+                    (false === opts.reset_page_index) ? idx
+                    : (idx - pagingInfo.pagenum * pagingInfo.pagesize)
+                );
+            });
+            return idxs;
+        },
+        /**
+         * @param object $grid The grid (if any)
+         * @return null|object
+         */
+        getRowsSelected: function($grid, opts) {
+            var _this = this;
+            opts = $.extend({ reset_page_index: false }, opts);
+            $grid = $grid || _this.$grid;
+            var selectedRowIdxs = _this.getSelectedRowIndexes($grid, opts) || [];
+            var rows = [];
+            $.each(selectedRowIdxs, function(_, idx) {
+                var row = _this.getRowSelected($grid, idx);
+                row && rows.push(row);
+            });
+            return rows;
         },
 
         /**

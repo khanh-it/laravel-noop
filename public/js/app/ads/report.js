@@ -65,12 +65,10 @@
                 actRptExcel = evt.action;
             }
             if (actRptDel || actRptExcel) {
-                var rows = $myGrid.jqxGrid('getrows');
                 var pid = [];
-                for (var i = 0; i < rows.length; i++) {
-                    var row = rows[i];
-                    if (row) { pid.push(row.rpt_id); }
-                }
+                $.each(mJWids.getRowsSelected(), function(_, row) {
+                    pid.push(row.rowid);
+                });
                 if (pid.length > 0) {
                     pid = ('&pid=' + pid.join());
                     if (actRptDel) {

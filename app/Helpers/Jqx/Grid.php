@@ -202,6 +202,8 @@ class Grid extends Widget
         'draggable' => Helper::UNDEF,
         // enables or disables the column resizing.
         'resizable' => Helper::UNDEF,
+        //
+        'threestatecheckbox' => Helper::UNDEF,
         /* sets the column's type. Possible values:
             'number' - readonly column with numbers.
             'checkbox' - readonly checkbox when the editing is disabled. Checkbox input when editing is enabled.
