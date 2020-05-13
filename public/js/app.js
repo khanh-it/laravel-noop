@@ -71,4 +71,14 @@ $.myUtils = $.myUtils = {
     //.end#php
 };
 //.
+
+// ckfinder
+$(function() {
+    $(document).on('click', '.popup-ckfinder_browser', function(evt) {
+        evt.preventDefault();
+        //popup-ckfinder
+        window.CKFinder && CKFinder.modal({ width: 960, height: 720 });
+    });
+});
+//.
 })(jQuery);

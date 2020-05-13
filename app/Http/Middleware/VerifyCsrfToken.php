@@ -12,6 +12,7 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        //
+        // @see https://github.com/ckfinder/ckfinder-laravel-package
+        '/cms/ckfinder/*',
     ];
 }

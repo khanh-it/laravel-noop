@@ -27,6 +27,9 @@ $curRouteName = Route::currentRouteName();
         <li role="presentation" class="{{$isActive ? "active" : ""}}">
             <a href="{{ $route }}">{{ _("Tag") }}</a>
         </li>
+        <li role="presentation" class="">
+            <a href="{{ route($routeName = "ckfinder_browser") }}" class="popup-ckfinder_browser">{{ _("Files Manager") }}</a>
+        </li>
         {{-- <li role="presentation" class="nav-submenu">
             <a data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Submenus</a>
             <ul id="collapseExample" class="nav nav-stacked collapse">

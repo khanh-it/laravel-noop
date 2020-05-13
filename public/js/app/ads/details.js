@@ -22,7 +22,9 @@
                 // width: '100%',
                 height: Math.round($adsContent.height() - eToolbarHeight) + 'px',
             }
-            return (window.__editor = CKEDITOR.replace($adsContent.get(0), opts));
+            var editor = CKEDITOR.replace($adsContent.get(0), opts);
+            window.CKFinder && CKFinder.setupCKEditor(editor);
+            return (window.__editor = editor);
         })();
         //.end
 

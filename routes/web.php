@@ -85,6 +85,20 @@ Route::group([
         Route::get(($act = 'report') . '/{id?}', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}{$act}"]);
     });
     /** .end#Ads */
+
+    /** ckfinder @see https://github.com/ckfinder/ckfinder-laravel-package */
+    $prefix = 'ckfinder';
+    Route::group([
+        'prefix' => $prefix
+    ], function() use ($prefix) {
+        $prefix = "{$prefix}_";
+        $clt = '\CKSource\CKFinderBridge\Controller\CKFinderController@';
+        // Define routes
+        Route::any($act = 'connector', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}requestAction"]);
+        Route::any($act = 'browser', ['as' => "{$prefix}{$act}", 'uses' => "{$clt}browserAction"]);
+        // Route::any($act = 'examples/{example?}', ['as' => "{$prefix}examples", 'uses' => "{$clt}examplesAction"]);
+    });
+    /** .end#ckfinder */
 });
 
 // Resources...

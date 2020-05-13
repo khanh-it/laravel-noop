@@ -12,6 +12,7 @@ class EncryptCookies extends Middleware
      * @var array
      */
     protected $except = [
-        //
+        // @see https://github.com/ckfinder/ckfinder-laravel-package
+        'ckCsrfToken',
     ];
 }
