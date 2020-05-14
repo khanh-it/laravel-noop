@@ -160,7 +160,7 @@ class ResourcesController extends Controller
                 '_fr' => '__fr__',
                 '_rdr' => '__rdr__'
             ]),
-            "attr_target" => '_top',
+            "attr_target" => '_parent',
             "rpt_uri_fr" => $rptUriFr
         ];
         $p = '/<a[^>]*>/is';
@@ -182,18 +182,18 @@ class ResourcesController extends Controller
                 return $attr;
             }, $html);
             // +++ target
-            $attrFound = false;
-            $html = \preg_replace_callback($p = '/target *= *[\'"]([^\'"]*)[\'"]/is', function($m) use (&$replaceData, &$attrFound) {
+            // $attrFound = false;
+            $html = \preg_replace_callback($p = '/target *= *[\'"]([^"]*)[\'"]/is', function($m) use (&$replaceData, &$attrFound) {
 				$attr = $m[0]; $target = trim($m[1]) ?? null;
 				if (\in_array($target, ['', '_self'])) {
-					$attrFound = true;
+					// $attrFound = true;
 					$attr = ('target="' . $replaceData['attr_target'] . '"');
 				}
                 return $attr;
             }, $html);
-            if (!$attrFound) {
+            /* if (!$attrFound) {
                 $html = \str_replace('<a', '<a target="' . $replaceData['attr_target'] . '"', $html);
-            }
+            } */
             // Return;
             return $html;
         }, $adsContent);
